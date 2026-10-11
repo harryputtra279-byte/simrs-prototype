@@ -1,0 +1,39 @@
+{
+  "name": "SIMRS PROTOTYPE",
+  "short_name": "SIMRS PROTOTYPE",
+  "description": "Prototype sistem informasi manajemen rumah sakit terintegrasi: pendaftaran, poli, laboratorium, farmasi, kasir, dan rekam medis dalam satu alur.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "id": "./index.html",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#F4F7FF",
+  "theme_color": "#4A8BFF",
+  "lang": "id",
+  "dir": "ltr",
+  "categories": [
+    "medical",
+    "productivity",
+    "business"
+  ],
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

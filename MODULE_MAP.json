@@ -1,0 +1,80 @@
+{
+  "version": "v16.4.0",
+  "script_order": [
+    "modules/rawat-inap/core.js",
+    "modules/01-core-store-master.js",
+    "modules/02-navigation-auth-shell.js",
+    "modules/03-patient-app.js",
+    "modules/04-registration-booking.js",
+    "modules/05-outpatient.js",
+    "modules/06-diagnostics-pharmacy-cashier.js",
+    "modules/07-inpatient-medical-records.js",
+    "modules/08-queue-igd-bootstrap.js"
+  ],
+  "modules": [
+    {
+      "path": "modules/01-core-store-master.js",
+      "name": "MODUL 01 — CORE, STORE, MASTER DATA & AKUN DEMO",
+      "responsibility": "Konstanta, seed/migrasi data, penyimpanan lokal, master fasilitas, akun demo, dan helper dasar."
+    },
+    {
+      "path": "modules/02-navigation-auth-shell.js",
+      "name": "MODUL 02 — NAVIGASI, AUTENTIKASI & KERANGKA UI",
+      "responsibility": "Katalog menu, RBAC, login, sesi, toast/modal, dan helper tampilan bersama."
+    },
+    {
+      "path": "modules/03-patient-app.js",
+      "name": "MODUL 03 — APLIKASI PASIEN",
+      "responsibility": "Dashboard pasien, booking sisi pasien, tiket/barcode, riwayat, notifikasi, dan perjalanan layanan."
+    },
+    {
+      "path": "modules/04-registration-booking.js",
+      "name": "MODUL 04 — PENDAFTARAN & BOOKING RAWAT JALAN",
+      "responsibility": "Loket, pendaftaran, booking antrean, check-in QR, dan pengingat H-1."
+    },
+    {
+      "path": "modules/05-outpatient.js",
+      "name": "MODUL 05 — RAWAT JALAN & POLIKLINIK",
+      "responsibility": "Beranda poli, monitor antrean, dokter/asisten, dan penyelesaian pemeriksaan."
+    },
+    {
+      "path": "modules/06-diagnostics-pharmacy-cashier.js",
+      "name": "MODUL 06 — LABORATORIUM, RADIOLOGI, FARMASI & KASIR",
+      "responsibility": "Order penunjang, hasil, penerimaan resep, perjalanan obat, dan tagihan/pembayaran."
+    },
+    {
+      "path": "modules/07-inpatient-medical-records.js",
+      "name": "MODUL 07 — RAWAT INAP, REKAM MEDIS & MASTER OPERASIONAL",
+      "responsibility": "Admisi, ruang/bed, episode Rawat Inap, rekam medis, riwayat dokter, dan master operasional."
+    },
+    {
+      "path": "modules/08-queue-igd-bootstrap.js",
+      "name": "MODUL 08 — PAPAN ANTREAN, IGD & BOOTSTRAP",
+      "responsibility": "Papan antrean, episode/triase/kerja klinis IGD, monitor IGD, registrasi renderer, dan inisialisasi aplikasi."
+    }
+  ],
+  "stage7": {
+    "goal": "Meningkatkan keterlacakan kode dan dokumentasi dependensi tanpa mengubah workflow runtime.",
+    "compatibility": "Classic scripts dipertahankan; urutan script tidak diubah.",
+    "validation": [
+      "Node.js syntax checks",
+      "local asset and script-order checks",
+      "ZIP integrity check"
+    ],
+    "limitation": "Belum menggantikan pengujian browser end-to-end dan pengujian manual per role."
+  },
+  "stage8": {
+    "goal": "Audit integrasi lintas unit, memperbaiki duplikasi renderer IGD yang menimpa implementasi lebih lengkap, dan menambah pemeriksaan regresi statis.",
+    "fixes": [
+      "Menghapus deklarasi renderIGD dan renderIgdReferralsHtml duplikat yang muncul lebih akhir dan menimpa dashboard IGD lengkap."
+    ],
+    "validation": [
+      "Node.js syntax checks",
+      "Unique global function declaration checks",
+      "Script order and asset checks",
+      "Cross-unit workflow contract checks",
+      "ZIP integrity check"
+    ],
+    "limitation": "Pengujian browser interaktif menyeluruh tetap perlu dilakukan; pemeriksaan statis tidak menggantikan validasi klinis dan end-to-end."
+  }
+}
