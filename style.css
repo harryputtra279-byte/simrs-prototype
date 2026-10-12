@@ -1004,3 +1004,36 @@ input:focus,select:focus,textarea:focus{outline:2px solid rgba(22,139,255,.18)!i
 .demo-account-desc{font-size:10.5px;font-weight:450;opacity:.82;white-space:normal}
 .demo-account-action{font-size:10px;font-weight:750;opacity:.85;margin-top:2px}
 @media(max-width:480px){.login-demo-summary{padding:11px}.login-demo-summary .login-demo-title{font-size:11.5px}.demo-account-chip{flex-basis:100%;width:100%}.login-demo-content{padding:0 8px 8px}}
+
+/* =========================================================
+   PENCARIAN KODE: UI THEME V16.5.3 — PURPLE LAVENDER GLASS
+   Lapisan visual global. Fokus pada border kaca lebih tegas,
+   blur lembut, aksen ungu/pink, dan keterbacaan lintas modul.
+   Tidak mengubah struktur DOM atau alur kerja.
+   ========================================================= */
+:root{
+  --paper:#f1edff;--panel:rgba(255,255,255,.46);
+  --accent:#8054ee;--accent-2:#b45be8;--clinical:#8054ee;--clinical-dark:#6840d5;
+  --clinical-tint:rgba(128,84,238,.16);
+  --glass-bg:rgba(250,247,255,.43);--glass-bg-strong:rgba(250,247,255,.72);
+  --glass-border:rgba(255,255,255,.96);--glass-border-soft:rgba(139,99,239,.42);
+  --glass-blur:28px;
+  --shadow-float:0 12px 34px rgba(91,62,160,.13),0 0 0 1px rgba(170,139,255,.18),inset 0 1.5px 0 rgba(255,255,255,.94);
+  --shadow-pop:0 18px 48px rgba(78,47,146,.22),0 0 0 1px rgba(170,139,255,.25),inset 0 1.5px 0 rgba(255,255,255,.98);
+}
+body{background-color:#f1edff;background-image:radial-gradient(ellipse at 15% 10%,rgba(164,143,255,.42),transparent 42%),radial-gradient(ellipse at 88% 12%,rgba(218,160,255,.34),transparent 40%),radial-gradient(ellipse at 55% 95%,rgba(160,137,255,.25),transparent 45%),linear-gradient(145deg,#e8e5ff 0%,#f7f2ff 48%,#eee7ff 100%);}
+.panel,.sidebar,.topbar,.stat,.queue-board-item,.login-panel,.modal,.bottom-tabbar,.bottom-sheet,.ticket,.queue-list-item,.ops-hero,.ops-kpi,.rj-kpi,.rj-flow-step,.rj-queue-item,.patient-queue-focus>div,.action-card,.tabs,.facility-node,.pharmacy-monitor,.service-tree>div{
+  background:linear-gradient(145deg,rgba(255,255,255,.66),rgba(247,241,255,.34));
+  border:1.8px solid rgba(255,255,255,.96);
+  box-shadow:var(--shadow-float),inset 0 0 0 1px rgba(157,119,244,.19);
+  -webkit-backdrop-filter:blur(28px) saturate(175%);backdrop-filter:blur(28px) saturate(175%);
+}
+.panel{border-color:rgba(255,255,255,.98);}
+.panel-head{border-bottom:1px solid rgba(132,92,220,.18)}
+.btn-primary{background:linear-gradient(135deg,#8a5cf6,#bd65e8);box-shadow:0 6px 18px rgba(128,84,238,.28),inset 0 1px 0 rgba(255,255,255,.55)}
+.btn-primary:hover{background:linear-gradient(135deg,#7546e6,#a94ed8)}
+.btn-outline{border:1.6px solid rgba(145,108,231,.42);background:rgba(255,255,255,.42)}
+input,select,textarea{border-color:rgba(139,99,239,.34)!important;background:rgba(255,255,255,.56)!important;}
+.badge,.chip{border:1px solid rgba(146,108,232,.28)}
+.modal,.bottom-sheet{border-color:rgba(255,255,255,.98);box-shadow:0 24px 70px rgba(74,45,133,.25),0 0 0 1.5px rgba(151,113,236,.24),inset 0 1px 0 rgba(255,255,255,.98)}
+@media(prefers-reduced-motion:no-preference){.panel,.action-card,.rj-kpi,.ops-kpi{transition:box-shadow .18s ease,border-color .18s ease,transform .18s ease}.panel:hover,.action-card:hover{border-color:rgba(171,137,255,.9);box-shadow:0 16px 40px rgba(91,62,160,.17),0 0 0 1px rgba(171,137,255,.32),inset 0 1.5px 0 rgba(255,255,255,.98)}}
