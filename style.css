@@ -1037,3 +1037,33 @@ input,select,textarea{border-color:rgba(139,99,239,.34)!important;background:rgb
 .badge,.chip{border:1px solid rgba(146,108,232,.28)}
 .modal,.bottom-sheet{border-color:rgba(255,255,255,.98);box-shadow:0 24px 70px rgba(74,45,133,.25),0 0 0 1.5px rgba(151,113,236,.24),inset 0 1px 0 rgba(255,255,255,.98)}
 @media(prefers-reduced-motion:no-preference){.panel,.action-card,.rj-kpi,.ops-kpi{transition:box-shadow .18s ease,border-color .18s ease,transform .18s ease}.panel:hover,.action-card:hover{border-color:rgba(171,137,255,.9);box-shadow:0 16px 40px rgba(91,62,160,.17),0 0 0 1px rgba(171,137,255,.32),inset 0 1.5px 0 rgba(255,255,255,.98)}}
+
+
+/* ============================================================
+   PENCARIAN KODE: GLASS-3D-CONSOLIDATION-V16.5.4
+   Lapisan akhir tema: lavender/ungu/pink, border lebih tebal.
+   Tidak mengubah layout atau perilaku komponen.
+   ============================================================ */
+:root {
+  --simrs-glass-border: rgba(222, 198, 255, .78);
+  --simrs-glass-border-hot: rgba(244, 176, 255, .88);
+  --simrs-glass-shadow: 0 12px 32px rgba(39, 15, 83, .22), inset 0 1px 0 rgba(255,255,255,.55);
+  --simrs-glass-surface: linear-gradient(145deg, rgba(255,255,255,.22), rgba(190,153,255,.12) 48%, rgba(255,155,221,.13));
+}
+:is(.card,.panel,.modal-content,.modal-window,.login-card,.auth-card,.superuser-card,.menu-card,.dashboard-card,.stat-card,.glass-card,.quick-action-card) {
+  border: 2px solid var(--simrs-glass-border) !important;
+  background-image: var(--simrs-glass-surface);
+  box-shadow: var(--simrs-glass-shadow);
+  -webkit-backdrop-filter: blur(22px) saturate(145%);
+  backdrop-filter: blur(22px) saturate(145%);
+}
+:is(button,.btn,[role="button"],.icon-button,.nav-icon-button,.menu-toggle,.hamburger-button) {
+  border-color: var(--simrs-glass-border-hot);
+  box-shadow: 0 5px 14px rgba(64,30,117,.18), inset 0 1px 0 rgba(255,255,255,.52);
+}
+:is(.modal,.modal-backdrop,.dialog,.dropdown-menu,.popover,.superuser-menu,.sidebar-menu) :is(.card,.panel,.menu-card,.menu-item,.dropdown-item) {
+  border-color: var(--simrs-glass-border) !important;
+}
+@media (max-width: 640px) {
+  :is(.card,.panel,.modal-content,.modal-window,.login-card,.auth-card,.superuser-card,.menu-card,.dashboard-card,.stat-card,.glass-card,.quick-action-card) { border-width: 2px !important; }
+}
