@@ -51,8 +51,8 @@ if (duplicates.length) duplicates.forEach(([name, locations]) => fail(`Deklarasi
 else pass('Tidak ditemukan deklarasi fungsi global duplikat antar-modul');
 
 // Version and cache consistency.
-if (!html.includes('v16.4.3') || !core.includes("PROTOTYPE_VERSION = 'v16.4.3'") || !sw.includes("const SW_VERSION = 'v16.4.3'")) fail('Versi index/core/service worker tidak seragam v16.4.3');
-else pass('Versi runtime, aset, dan Service Worker seragam v16.4.3');
+if (!html.includes('v16.5.0') || !core.includes("PROTOTYPE_VERSION = 'v16.5.0'") || !sw.includes("const SW_VERSION = 'v16.5.0'")) fail('Versi index/core/service worker tidak seragam v16.5.0');
+else pass('Versi runtime, aset, dan Service Worker seragam v16.5.0');
 
 // Login demo grouping must remain presentational and expose the five agreed service units.
 const auth = read('modules/02-navigation-auth-shell.js');
@@ -93,3 +93,13 @@ for (const [name, ok] of contracts) { if (ok) pass(name); else fail(name); }
 
 if (process.exitCode) process.exit(1);
 console.log('Stage 8 static integration contracts: PASS');
+
+// V16.5.0 targeted regression contracts for previously reported defects.
+const igdV1650 = read('modules/08-queue-igd-bootstrap.js');
+const ranapV1650 = read('modules/07-inpatient-medical-records.js');
+const ancillaryV1650 = read('modules/06-diagnostics-pharmacy-cashier.js');
+if (igdV1650.includes("jenis:'skrining_triase_igd'") && igdV1650.includes("jenis:'asesmen_igd'")) pass('V16.5.0: skrining dan asesmen IGD dicatat ke clinicalHistory episode'); else fail('V16.5.0: riwayat klinis IGD tidak lengkap');
+if (igdV1650.includes('const existingAdm=Store.data.admissions.some') && igdV1650.includes('const existingReq=')) pass('V16.5.0: rujukan admisi IGD mencegah permintaan ganda'); else fail('V16.5.0: guard admisi IGD tidak ditemukan');
+if (ranapV1650.includes("window.confirm('Konfirmasi admisi Rawat Inap?") && ranapV1650.includes("window.confirm('Konfirmasi penyelesaian pulang medis?")) pass('V16.5.0: admisi dan pemulangan meminta konfirmasi'); else fail('V16.5.0: konfirmasi tindakan kritis tidak lengkap');
+if (ancillaryV1650.includes('data-result-file') && ancillaryV1650.includes('1024*1024') && ancillaryV1650.includes('application/pdf') && ancillaryV1650.includes('lampiran=attachment')) pass('V16.5.0: lampiran gambar/PDF divalidasi dan disimpan bersama hasil'); else fail('V16.5.0: alur lampiran hasil penunjang tidak lengkap');
+if (igdV1650.includes('if(rx){rx.items.push') && igdV1650.includes("unit==='igd'")) pass('V16.5.0: resep IGD dapat berisi beberapa obat tanpa item duplikat'); else fail('V16.5.0: penambahan obat IGD belum terhubung');
