@@ -51,8 +51,8 @@ if (duplicates.length) duplicates.forEach(([name, locations]) => fail(`Deklarasi
 else pass('Tidak ditemukan deklarasi fungsi global duplikat antar-modul');
 
 // Version and cache consistency.
-if (!html.includes('v16.5.1') || !core.includes("PROTOTYPE_VERSION = 'v16.5.1'") || !sw.includes("const SW_VERSION = 'v16.5.1'")) fail('Versi index/core service worker tidak seragam v16.5.1');
-else pass('Versi runtime, aset, dan Service Worker seragam v16.5.1');
+if (!html.includes('v16.5.2') || !core.includes("PROTOTYPE_VERSION = 'v16.5.2'") || !sw.includes("const SW_VERSION = 'v16.5.2'")) fail('Versi index/core service worker tidak seragam v16.5.2');
+else pass('Versi runtime, aset, dan Service Worker seragam v16.5.2');
 
 // Login demo grouping must remain presentational and expose the five agreed service units.
 const auth = read('modules/02-navigation-auth-shell.js');
@@ -120,3 +120,14 @@ else fail('V16.5.1: antrean Farmasi belum mendukung resep lanjutan atau validasi
 
 if (core.includes('if(!resep.patientId && visit.patientId)')) pass('V16.5.1: migrasi resep lama melengkapi tautan pasien bila ID pasien belum tersimpan');
 else fail('V16.5.1: tautan pasien pada resep lama belum dipulihkan');
+
+// V16.5.2: dedicated inpatient prescription card and hierarchical bed picker.
+if (inpatient.includes('function submitRanapPrescription(admissionId)') && inpatient.includes('btn-save-ranap-rx') && inpatient.includes('Resep Obat Rawat Inap') && inpatient.includes("unit:'rawat-inap'")) pass('V16.5.2: resep Rawat Inap memiliki kartu dan penyimpanan mandiri ke farmasi');
+else fail('V16.5.2: kartu resep mandiri Rawat Inap belum lengkap');
+if (inpatient.includes('ab-gedung') && inpatient.includes('ab-lantai') && inpatient.includes('ab-ruang') && inpatient.includes('ab-bed') && inpatient.includes('refreshBedHierarchy')) pass('V16.5.2: pemilihan bed bertahap gedung-lantai-ruang-bed');
+else fail('V16.5.2: pemilihan bed hierarkis belum lengkap');
+if (igd.includes('Resep Obat IGD</h3>') && igd.indexOf('Resep Obat IGD</h3>') < igd.indexOf('Diagnosis / asesmen IGD')) pass('V16.5.2: kartu resep IGD diletakkan sebelum diagnosis');
+else fail('V16.5.2: urutan kartu resep IGD tidak sesuai');
+
+if (inpatient.includes('return ranapPrescriptionComposerHtml(a)+(canWrite') && inpatient.includes('Kirim Resep ke Farmasi Rawat Inap')) pass('V16.5.2: kartu resep Rawat Inap tampil pada layar klinis utama sebelum CPPT/asesmen');
+else fail('V16.5.2: kartu resep Rawat Inap tidak tampil pada layar klinis utama');
