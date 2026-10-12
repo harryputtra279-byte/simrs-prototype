@@ -99,6 +99,12 @@ const OFFICIAL_POLI_CATALOG = [
 ];
 
 const PROTOTYPE_FACILITY_STRUCTURE = [
+  // PENCARIAN KODE: MASTER-GEDUNG-RAWAT-INAP-V16.5.4
+  // Master fasilitas diselaraskan dengan buildingId pada INPATIENT_ROOM_SEED.
+  {id:'GED-A',type:'gedung',nama:'Gedung A — Rawat Inap Utama',parentId:'GED-RAWAT-INAP',source:'baseline-prototype'},
+  {id:'GED-B',type:'gedung',nama:'Gedung B — Rawat Inap Terpadu (BPJS)',parentId:'GED-RAWAT-INAP',source:'baseline-prototype'},
+  {id:'GED-C',type:'gedung',nama:'Gedung C — Rawat Inap Khusus (BPJS)',parentId:'GED-RAWAT-INAP',source:'baseline-prototype'},
+  {id:'GED-K',type:'gedung',nama:'Gedung Khusus — Perawatan Khusus',parentId:'GED-RAWAT-INAP',source:'baseline-prototype'},
   {id:'GED-RAWAT-JALAN',type:'gedung',nama:'Pelayanan Rawat Jalan',parentId:null,source:'baseline-prototype'},
   {id:'UNIT-POLI-SPESIALIS',type:'unit',nama:'Poliklinik Spesialis',parentId:'GED-RAWAT-JALAN',source:'baseline-prototype'},
   {id:'UNIT-POLI-EKSEKUTIF',type:'unit',nama:'Poliklinik Eksekutif',parentId:'GED-RAWAT-JALAN',source:'baseline-prototype'},
