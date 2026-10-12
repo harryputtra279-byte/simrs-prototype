@@ -7,8 +7,8 @@
   "id": "./index.html",
   "display": "standalone",
   "orientation": "any",
-  "background_color": "#F4F7FF",
-  "theme_color": "#4A8BFF",
+  "background_color": "#F5F0FF",
+  "theme_color": "#8B5CF6",
   "lang": "id",
   "dir": "ltr",
   "categories": [
