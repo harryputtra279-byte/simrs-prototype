@@ -1021,6 +1021,81 @@ input:focus,select:focus,textarea:focus{outline:2px solid rgba(22,139,255,.18)!i
 .demo-account-action{font-size:10px;font-weight:750;opacity:.85;margin-top:2px}
 @media(max-width:480px){.login-demo-summary{padding:11px}.login-demo-summary .login-demo-title{font-size:11.5px}.demo-account-chip{flex-basis:100%;width:100%}.login-demo-content{padding:0 8px 8px}}
 
+
+/* =========================================================
+ PENCARIAN KODE: V16.5.5-UNIFIED-ONEUI-GLASS
+ Sistem desain terpusat: login, pelayan cepat, ikon, tombol,
+ menu Super User, kartu, dialog, input dan panel seluruh unit.
+ ========================================================= */
+:root{
+ --simrs-glass-bg:rgba(249,245,255,.62);
+ --simrs-glass-bg-deep:rgba(240,231,255,.78);
+ --simrs-glass-line:rgba(255,255,255,.98);
+ --simrs-glass-line-accent:rgba(151,112,244,.78);
+ --simrs-glass-line-pink:rgba(232,151,239,.72);
+ --simrs-glass-elevation:0 12px 30px rgba(83,52,145,.18),0 0 0 1px rgba(169,133,246,.20),inset 0 2px 0 rgba(255,255,255,.98),inset 0 -1px 0 rgba(201,174,255,.28);
+ --simrs-glass-elevation-hover:0 16px 36px rgba(83,52,145,.24),0 0 0 1.5px rgba(187,147,255,.42),inset 0 2px 0 #fff;
+ --simrs-gradient:linear-gradient(120deg,#22b8e9 0%,#397cf4 48%,#9b4de8 100%);
+}
+/* PENCARIAN KODE: V16.5.5-LOGIN-FAST-SERVER */
+.login-panel,.login-card,.login-hero,.login-header,.login-admin-access,.login-demo-section,
+.login-demo-summary,.login-demo-content,.demo-account-chip,.login-form,.auth-panel,.auth-card,
+.server-login,.quick-login,.fast-login,.login-shell,.login-container{
+ border:2px solid var(--simrs-glass-line-accent)!important;
+ border-radius:24px!important;
+ box-shadow:var(--simrs-glass-elevation)!important;
+ -webkit-backdrop-filter:blur(28px) saturate(175%)!important;backdrop-filter:blur(28px) saturate(175%)!important;
+}
+.login-hero,.login-header,.login-brand,.login-banner,.login-panel .hero,.login-panel .panel-head{
+ background:var(--simrs-gradient)!important;border:2px solid rgba(255,255,255,.95)!important;
+ box-shadow:inset 0 2px 0 rgba(255,255,255,.72),0 8px 24px rgba(81,64,186,.22)!important;
+}
+/* PENCARIAN KODE: V16.5.5-ALL-CONTROLS */
+button,.btn,[role="button"],.icon-button,.nav-icon-button,.menu-toggle,.hamburger-button,
+.avatar-btn,.tab,.tab-item,.btn-primary,.btn-outline,.btn-ghost,.btn-secondary,
+button.icon,.action-btn,.toolbar button,.topbar button,.topbar .btn{
+ border:1.8px solid var(--simrs-glass-line-accent)!important;
+ box-shadow:0 6px 15px rgba(83,52,145,.15),inset 0 1.5px 0 rgba(255,255,255,.94)!important;
+ -webkit-backdrop-filter:blur(18px) saturate(155%);backdrop-filter:blur(18px) saturate(155%);
+}
+.btn-primary,button.primary,[data-action="login"],#btn-login,.login-submit{
+ background:var(--simrs-gradient)!important;color:#fff!important;border:2px solid rgba(255,255,255,.96)!important;
+ box-shadow:0 9px 24px rgba(107,73,201,.32),inset 0 2px 0 rgba(255,255,255,.62),inset 0 -2px 0 rgba(87,42,167,.16)!important;
+}
+/* PENCARIAN KODE: V16.5.5-SUPERUSER-MENU-CARDS */
+.admin-folder-item,.admin-menu-folder,.admin-menu-card,.superuser-menu .menu-item,
+.superuser-menu .card,.superuser-card,.admin-dashboard .card,.admin-dashboard .panel,
+.quick-action-card,.action-card,.menu-card,.dashboard-card,.stat-card,.glass-card{
+ border:2px solid var(--simrs-glass-line-accent)!important;
+ background:linear-gradient(145deg,rgba(255,255,255,.76),rgba(241,231,255,.52) 60%,rgba(255,225,249,.40))!important;
+ box-shadow:var(--simrs-glass-elevation)!important;
+ -webkit-backdrop-filter:blur(24px) saturate(165%);backdrop-filter:blur(24px) saturate(165%);
+}
+/* PENCARIAN KODE: V16.5.5-MODALS-INPUTS-ICONS */
+.modal,.modal-content,.modal-window,.dialog,.popover,.dropdown-menu,.sidebar-menu,.bottom-sheet,
+input,select,textarea,.field input,.field select,.field textarea,.icon-btn,.icon-button,
+.notification-btn,.search-btn,.profile-btn{
+ border:1.8px solid var(--simrs-glass-line-accent)!important;
+ box-shadow:0 8px 24px rgba(83,52,145,.12),inset 0 1.5px 0 rgba(255,255,255,.92)!important;
+}
+.modal,.modal-content,.modal-window,.dialog,.popover,.dropdown-menu,.sidebar-menu,.bottom-sheet{
+ background:linear-gradient(145deg,rgba(250,247,255,.94),rgba(239,229,255,.88),rgba(255,235,251,.86))!important;
+ border:2px solid var(--simrs-glass-line)!important;box-shadow:0 24px 60px rgba(65,39,125,.25),0 0 0 1px var(--simrs-glass-line-pink),inset 0 2px 0 #fff!important;
+}
+.panel,.sidebar,.topbar,.stat,.ticket,.tabs,.facility-node,.service-tree>div,.queue-board-item,
+.rj-kpi,.ops-kpi,.patient-live-card,.patient-ticket-row,.doctor-summary,.doctor-payer-summary{
+ border-width:2px!important;border-color:var(--simrs-glass-line)!important;
+ box-shadow:var(--simrs-glass-elevation)!important;
+}
+button:hover,.btn:hover,[role="button"]:hover,.admin-folder-item:hover,.admin-menu-folder:hover,.action-card:hover{
+ border-color:var(--simrs-glass-line-pink)!important;box-shadow:var(--simrs-glass-elevation-hover)!important;
+}
+:focus-visible{outline:3px solid rgba(151,112,244,.72)!important;outline-offset:2px!important}
+@media(max-width:600px){
+ .login-panel,.login-card,.auth-card,.admin-folder-item,.admin-menu-folder,.admin-menu-card,.menu-card,.action-card{border-width:2px!important;border-radius:18px!important}
+ button,.btn,[role="button"],.icon-button,.nav-icon-button{min-height:40px}
+}
+
 </style>
 </head>
 <body>
