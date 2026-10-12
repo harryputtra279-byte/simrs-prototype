@@ -1,6 +1,7 @@
 {
-  "version": "v16.4.0",
+  "version": "v16.5.8",
   "script_order": [
+    "theme-system.js",
     "modules/rawat-inap/core.js",
     "modules/01-core-store-master.js",
     "modules/02-navigation-auth-shell.js",
@@ -73,8 +74,10 @@
       "Unique global function declaration checks",
       "Script order and asset checks",
       "Cross-unit workflow contract checks",
-      "ZIP integrity check"
+      "ZIP integrity check",
+      "Theme menu RBAC and Master Data tab contracts",
+      "Login glass selectors and inpatient building hierarchy contracts"
     ],
-    "limitation": "Pengujian browser interaktif menyeluruh tetap perlu dilakukan; pemeriksaan statis tidak menggantikan validasi klinis dan end-to-end."
+    "limitation": "Pemeriksaan statis dan startup smoke lulus; pengujian browser end-to-end Android tetap harus dilakukan manual."
   }
 }
