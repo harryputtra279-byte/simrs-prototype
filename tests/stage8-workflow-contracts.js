@@ -51,8 +51,8 @@ if (duplicates.length) duplicates.forEach(([name, locations]) => fail(`Deklarasi
 else pass('Tidak ditemukan deklarasi fungsi global duplikat antar-modul');
 
 // Version and cache consistency.
-if (!html.includes('v16.5.2') || !core.includes("PROTOTYPE_VERSION = 'v16.5.2'") || !sw.includes("const SW_VERSION = 'v16.5.2'")) fail('Versi index/core service worker tidak seragam v16.5.2');
-else pass('Versi runtime, aset, dan Service Worker seragam v16.5.2');
+if (!html.includes('v16.5.3') || !core.includes("PROTOTYPE_VERSION = 'v16.5.3'") || !sw.includes("const SW_VERSION = 'v16.5.3'")) fail('Versi index/core service worker tidak seragam v16.5.3');
+else pass('Versi runtime, aset, dan Service Worker seragam v16.5.3');
 
 // Login demo grouping must remain presentational and expose the five agreed service units.
 const auth = read('modules/02-navigation-auth-shell.js');
