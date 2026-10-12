@@ -51,8 +51,8 @@ if (duplicates.length) duplicates.forEach(([name, locations]) => fail(`Deklarasi
 else pass('Tidak ditemukan deklarasi fungsi global duplikat antar-modul');
 
 // Version and cache consistency.
-if (!html.includes('v16.5.0') || !core.includes("PROTOTYPE_VERSION = 'v16.5.0'") || !sw.includes("const SW_VERSION = 'v16.5.0'")) fail('Versi index/core/service worker tidak seragam v16.5.0');
-else pass('Versi runtime, aset, dan Service Worker seragam v16.5.0');
+if (!html.includes('v16.5.1') || !core.includes("PROTOTYPE_VERSION = 'v16.5.1'") || !sw.includes("const SW_VERSION = 'v16.5.1'")) fail('Versi index/core service worker tidak seragam v16.5.1');
+else pass('Versi runtime, aset, dan Service Worker seragam v16.5.1');
 
 // Login demo grouping must remain presentational and expose the five agreed service units.
 const auth = read('modules/02-navigation-auth-shell.js');
@@ -103,3 +103,20 @@ if (igdV1650.includes('const existingAdm=Store.data.admissions.some') && igdV165
 if (ranapV1650.includes("window.confirm('Konfirmasi admisi Rawat Inap?") && ranapV1650.includes("window.confirm('Konfirmasi penyelesaian pulang medis?")) pass('V16.5.0: admisi dan pemulangan meminta konfirmasi'); else fail('V16.5.0: konfirmasi tindakan kritis tidak lengkap');
 if (ancillaryV1650.includes('data-result-file') && ancillaryV1650.includes('1024*1024') && ancillaryV1650.includes('application/pdf') && ancillaryV1650.includes('lampiran=attachment')) pass('V16.5.0: lampiran gambar/PDF divalidasi dan disimpan bersama hasil'); else fail('V16.5.0: alur lampiran hasil penunjang tidak lengkap');
 if (igdV1650.includes('if(rx){rx.items.push') && igdV1650.includes("unit==='igd'")) pass('V16.5.0: resep IGD dapat berisi beberapa obat tanpa item duplikat'); else fail('V16.5.0: penambahan obat IGD belum terhubung');
+
+
+// V16.5.1: multi-item prescription workflow and collapsed demo groups.
+const authV1651 = read('modules/02-navigation-auth-shell.js');
+if (authV1651.includes('<details class=\"login-demo-section\"') && !authV1651.includes("(index===0?'open':'')")) pass('V16.5.1: semua grup akun demo tertutup secara default');
+else fail('V16.5.1: grup akun demo masih terbuka secara default');
+if (igd.includes('function renderIgdMedicineRow(visitId,index)') && igd.includes('data-add-igd-med') && igd.includes('medItems.forEach') && igd.includes('medSeen.has(medId)')) pass('V16.5.1: dokter IGD dapat menyusun resep multiobat dengan validasi duplikasi');
+else fail('V16.5.1: penyusun resep multiobat IGD belum lengkap');
+if (inpatient.includes('function renderRanapMedicineRow(index)') && inpatient.includes('btn-add-ranap-medicine') && inpatient.includes('items:items') && inpatient.includes('data-ranap-rule')) pass('V16.5.1: dokter Rawat Inap dapat menyusun satu resep multiobat dari master obat');
+else fail('V16.5.1: penyusun resep multiobat Rawat Inap belum lengkap');
+if (ancillary.includes('function renderFarmasiRanapTab()') && ancillary.includes('resep.items.map') && ancillary.includes('function siapkanObatRanap')) pass('V16.5.1: resep multi-item tetap dapat diproses oleh antrean Farmasi Rawat Inap');
+else fail('V16.5.1: pemrosesan resep multi-item di Farmasi Rawat Inap tidak ditemukan');
+if (ancillary.includes('Antrean memakai record resep') && ancillary.includes('resep.visitId!==visitId') && ancillary.includes('resep.patientId!==visit.patientId')) pass('V16.5.1: antrean Farmasi IGD/RJ menampilkan tiap resep dan memvalidasi tautan pasien-kunjungan');
+else fail('V16.5.1: antrean Farmasi belum mendukung resep lanjutan atau validasi keterkaitan');
+
+if (core.includes('if(!resep.patientId && visit.patientId)')) pass('V16.5.1: migrasi resep lama melengkapi tautan pasien bila ID pasien belum tersimpan');
+else fail('V16.5.1: tautan pasien pada resep lama belum dipulihkan');
