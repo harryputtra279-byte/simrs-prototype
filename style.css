@@ -1182,3 +1182,11 @@ body{background-image:radial-gradient(circle at 12% 8%,color-mix(in srgb,var(--a
 .login-hero .sub{display:block!important;position:relative!important;margin:8px 0 0!important;line-height:1.5!important;max-width:100%!important;overflow-wrap:anywhere!important}
 .login-hero .ticket-hint{display:block!important;position:relative!important;margin:16px 0 0!important;line-height:1.4!important}
 @media(max-width:480px){.login-panel{max-width:100%!important}.login-hero{padding:24px 16px 20px!important}.login-hero .login-emblem{width:60px!important;height:60px!important;min-width:60px!important;min-height:60px!important;margin-bottom:15px!important}.login-hero h1{font-size:clamp(18px,5.4vw,23px)!important}}
+
+/* PENCARIAN KODE V16.5.10: aksi eksplisit Pratinjau dan Terapkan Tema. */
+#simrs-theme-panel .theme-option.selected{border-color:var(--accent,#8b5cf6);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent,#8b5cf6) 28%,transparent),inset 0 1px 0 #fff;transform:translateY(-1px)}
+#simrs-theme-panel .theme-action-row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:18px;padding-top:16px;border-top:1px solid rgba(90,65,130,.2)}
+#simrs-theme-panel .theme-action-row button{min-height:44px;padding:10px 16px;cursor:pointer}
+#simrs-theme-panel .theme-selected-label{margin:12px 0;font-weight:700;color:#35234d}
+#simrs-theme-panel .theme-action-hint{font-size:.88rem;opacity:.82;margin:10px 0 0}
+@media(max-width:560px){#simrs-theme-panel .theme-action-row{display:grid;grid-template-columns:1fr}#simrs-theme-panel .theme-action-row button{width:100%}}
