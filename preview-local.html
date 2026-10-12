@@ -6,13 +6,13 @@
 <title>SIMRS PROTOTYPE</title>
 <meta name="description" content="Prototype sistem informasi manajemen rumah sakit terintegrasi: pendaftaran, poli, laboratorium, farmasi, kasir, dan rekam medis dalam satu alur.">
 <meta name="theme-color" content="#4A8BFF">
-<meta name="application-version" content="v16.5.0">
+<meta name="application-version" content="v16.5.1">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="SIMRS PROTOTYPE">
 <link rel="manifest" href="manifest.json">
-<link rel="icon" href="icon-192.png?v=16.5.0" type="image/png">
-<link rel="apple-touch-icon" href="apple-touch-icon.png?v=16.5.0">
+<link rel="icon" href="icon-192.png?v=16.5.1" type="image/png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png?v=16.5.1">
 <style>
 :root{
   --ink:#182430; --ink-soft:rgba(24,36,48,.62); --ink-faint:rgba(24,36,48,.14); --ink-hair:rgba(24,36,48,.09);
@@ -3530,7 +3530,7 @@ function renderInpatientNurseMonitor(){
 const BIAYA_REGISTRASI = 10000;
 const BIAYA_LAB = 75000;
 const LOW_STOCK_THRESHOLD = 15;
-const PROTOTYPE_VERSION = 'v16.5.0';
+const PROTOTYPE_VERSION = 'v16.5.1';
 const PROTOTYPE_NAME = 'SIMRS PROTOTYPE';
 const PROTOTYPE_MODE = 'Portfolio / Demo';
 const QUEUE_JOURNEY = [
@@ -4398,6 +4398,7 @@ function linkPrescriptionToVisit(resep, visit){
   if(!resep || !visit) return false;
   let changed=false;
   if(!resep.visitId){resep.visitId=visit.id;changed=true;}
+  if(!resep.patientId && visit.patientId){resep.patientId=visit.patientId;changed=true;}
   if(!visit.resepId){visit.resepId=resep.id;changed=true;}
   if(!resep.unit){resep.unit=resep.admissionId?'rawat-inap':(visit.unit||'rawat-jalan');changed=true;}
   if(!resep.jenisLayanan){resep.jenisLayanan=resep.admissionId?'rawat-inap':(visit.unit||'rawat-jalan');changed=true;}
@@ -5122,7 +5123,7 @@ function chipsForDemo(){
     '<div class="login-demo-hint">Pengelolaan konfigurasi, master data, akun, dan audit. Dipisahkan karena bukan unit pelayanan klinis.</div>'+
     '<div class="chip-row">'+make([['admin','Admin Sistem — Siti Rahayu','Hak akses administrator/superuser sesuai konfigurasi yang sudah ada.']])+'</div></div>';
   const grouped = sections.map(function(sec,index){
-    return '<details class="login-demo-section" data-demo-group="'+sec.id+'" '+(index===0?'open':'')+'>'+
+    return '<details class="login-demo-section" data-demo-group="'+sec.id+'">'+
       '<summary class="login-demo-summary"><span class="login-demo-summary-copy"><span class="login-demo-title">'+sec.title+'</span><span class="login-demo-hint">'+sec.hint+'</span></span><span class="login-demo-chevron" aria-hidden="true">⌄</span></summary>'+
       '<div class="login-demo-content"><div class="chip-row">'+make(sec.items)+'</div></div></details>';
   }).join('');
@@ -7929,39 +7930,44 @@ function switchFarmasiTab(tab){
 function renderFarmasiResepTab(){
   const ctx = routeContext(currentRoute()) || 'rawat-jalan';
   reconcileOutpatientPrescriptions();
-  const list = Store.data.visits.filter(function(v){
-    const unit=v.unit||'rawat-jalan', resep=getResepByVisit(v.id);
-    const matchesUnit=ctx==='igd'?unit==='igd':ctx==='rawat-inap'?false:unit==='rawat-jalan';
-    return matchesUnit && resep && resep.status==='menunggu' && !resep.admissionId && v.status!=='dibatalkan';
-  }).sort((a,b)=>new Date(a.createdAt||a.tanggal)-new Date(b.createdAt||b.tanggal));
+  /* PENCARIAN KODE: MODUL: FARMASI | SUBMODUL: ANTREAN PER RESEP
+     Antrean memakai record resep, bukan satu resep per kunjungan. Dengan begitu
+     resep lanjutan setelah resep sebelumnya disiapkan tetap muncul sebagai antrean baru. */
+  const list = (Store.data.prescriptions||[]).filter(function(resep){
+    if(!resep.visitId||resep.admissionId||resep.status!=='menunggu')return false;
+    const visit=getVisit(resep.visitId);if(!visit||visit.status==='dibatalkan'||visit.patientId!==resep.patientId)return false;
+    const unit=visit.unit||'rawat-jalan';
+    return ctx==='igd'?unit==='igd':ctx==='rawat-inap'?false:unit==='rawat-jalan';
+  }).sort(function(a,b){return new Date(a.createdAt||0)-new Date(b.createdAt||0);});
   const area = document.getElementById('farmasi-tab-area');
   if(list.length===0){ area.innerHTML = '<div class="panel"><div class="panel-body"><div class="empty"><div class="big">✓</div>Tidak ada resep yang menunggu diracik.</div></div></div>'; return; }
-  area.innerHTML = list.map(v=>{
-    const p = getPatient(v.patientId), poli = getPoli(v.poliId), resep = getResepByVisit(v.id), asal = v.unit==='igd'?'IGD':poli.nama;
-    if(!p || !resep) return '';
+  area.innerHTML = list.map(function(resep){
+    const v=getVisit(resep.visitId),p=getPatient(resep.patientId),poli=v&&getPoli(v.poliId),asal=v&&v.unit==='igd'?'IGD':(poli?poli.nama:'Rawat Jalan');
+    if(!p||!v)return '';
     return '<div class="panel" style="margin-bottom:10px"><div class="panel-body">'+
       '<div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:10px">'+
-        '<div><strong>'+esc(p.nama)+'</strong> <span class="mono" style="color:var(--ink-soft)">('+p.id+')</span><br>'+
-        '<span style="font-size:13px;color:var(--ink-soft)">Dari '+esc(asal)+' &middot; No. Antrian '+v.noAntrian+'</span></div>'+badgeStatus('menunggu_farmasi')+
+        '<div><strong>'+esc(p.nama)+'</strong> <span class="mono" style="color:var(--ink-soft)">('+esc(p.id)+')</span><br>'+
+        '<span style="font-size:13px;color:var(--ink-soft)">Dari '+esc(asal)+' · No. Antrian '+esc(v.noAntrian||v.id)+' · Resep '+esc(resep.id)+'</span></div>'+badgeStatus('menunggu_farmasi')+
       '</div>'+
       '<div class="table-wrap"><table><thead><tr><th>Obat</th><th>Diminta</th><th>Stok Tersedia</th><th>Disiapkan</th><th>Aturan Pakai</th></tr></thead><tbody>'+
-      resep.items.map((it,idx)=>{
-        const med = getMedicine(it.medicineId), cukup = med.stok >= it.jumlah;
+      (resep.items||[]).map(function(it,idx){
+        const med=getMedicine(it.medicineId);if(!med)return '<tr><td>'+esc(it.nama||'Obat tidak ditemukan')+'</td><td>'+it.jumlah+'</td><td colspan="3">Obat tidak ditemukan pada master; perbaiki master sebelum diproses.</td></tr>';
+        const cukup=Number(med.stok)>=Number(it.jumlah);
         return '<tr><td>'+esc(it.nama)+'</td><td class="mono">'+it.jumlah+'</td>'+
           '<td class="mono" style="color:'+(cukup?'var(--sage)':'var(--brick)')+';font-weight:700">'+med.stok+'</td>'+
           '<td><input type="number" min="0" max="'+med.stok+'" value="'+Math.min(it.jumlah,med.stok)+'" style="width:80px" id="siap-'+resep.id+'-'+idx+'"></td>'+
-          '<td>'+esc(it.aturanPakai)+'</td></tr>';
+          '<td>'+esc(it.aturanPakai||'-')+'</td></tr>';
       }).join('')+'</tbody></table></div>'+
-      (resep.items.some(it=>getMedicine(it.medicineId).stok < it.jumlah) ? '<div class="alert alert-warning" style="margin-top:10px">⚠ Ada obat dengan stok tidak mencukupi. Jumlah "Disiapkan" otomatis dibatasi sesuai stok — sesuaikan bila perlu.</div>' : '')+
+      ((resep.items||[]).some(function(it){const med=getMedicine(it.medicineId);return !med||Number(med.stok)<Number(it.jumlah);})?'<div class="alert alert-warning" style="margin-top:10px">⚠ Ada item dengan stok tidak mencukupi atau master obat tidak ditemukan. Periksa sebelum menyiapkan.</div>':'')+
       '<button class="btn btn-primary btn-sm" style="margin-top:8px" data-siapkan="'+resep.id+'" data-visit="'+v.id+'">Siapkan Obat</button>'+
     '</div></div>';
   }).join('');
-  area.querySelectorAll('[data-siapkan]').forEach(btn=> btn.addEventListener('click', ()=> siapkanObat(btn.dataset.siapkan, btn.dataset.visit)));
+  area.querySelectorAll('[data-siapkan]').forEach(function(btn){btn.addEventListener('click',function(){siapkanObat(btn.dataset.siapkan,btn.dataset.visit);});});
 }
 function siapkanObat(resepId, visitId){
   if(!Session.currentUser||!['farmasi','admin'].includes(Session.currentUser.role)){showToast('Pemrosesan resep hanya dapat dilakukan petugas Farmasi atau admin demo.','danger');return;}
   const resep = getResep(resepId), visit = getVisit(visitId);
-  if(!resep || !visit || getResepByVisit(visitId)?.id!==resepId){showToast('Resep dan kunjungan pasien tidak terhubung. Muat ulang antrean farmasi.','danger');return;}
+  if(!resep || !visit || resep.visitId!==visitId || resep.patientId!==visit.patientId || (visit.unit==='igd' && resep.unit!=='igd')){showToast('Resep dan kunjungan pasien tidak terhubung. Muat ulang antrean farmasi.','danger');return;}
   if(resep.status!=='menunggu'){showToast('Resep ini sudah diproses; cegah stok terpotong dua kali.','warning');return;}
   let totalObat=0;const reservedByMedicine={};
   for(let idx=0;idx<resep.items.length;idx++){
@@ -8510,10 +8516,20 @@ function renderRanapDetailBody(a){
   else el.innerHTML = ranapPulangTabHtml(a);
   bindRanapDetailEvents(a);
 }
+function renderRanapMedicineRow(index){
+  return '<div class="resep-row" data-ranap-med-row style="margin-bottom:8px">'+
+    '<select data-ranap-med name="ranap-med-'+index+'"><option value="">Pilih obat dari master</option>'+Store.data.medicines.map(function(m){return '<option value="'+esc(m.id)+'">'+esc(m.nama)+' · stok '+m.stok+'</option>';}).join('')+'</select>'+
+    '<input type="number" data-ranap-qty min="1" step="1" value="1" aria-label="Jumlah obat" placeholder="Jumlah">'+
+    '<input type="text" data-ranap-rule maxlength="240" aria-label="Dosis dan aturan pakai" placeholder="Dosis/aturan pakai, mis. 3x1 sesudah makan">'+
+    (index>0?'<button type="button" class="btn btn-ghost btn-sm" data-remove-ranap-med aria-label="Hapus obat">Hapus</button>':'<span></span>')+'</div>';
+}
 function bindRanapDetailEvents(a){
   const c = document.getElementById('btn-tambah-cppt'); if(c) c.addEventListener('click', function(){ submitCppt(a.id); });
   const v = document.getElementById('btn-tambah-vital'); if(v) v.addEventListener('click', function(){ submitVital(a.id); });
   const o = document.getElementById('btn-tambah-order'); if(o) o.addEventListener('click', function(){ submitOrder(a.id); });
+  const addMed=document.getElementById('btn-add-ranap-medicine');
+  if(addMed)addMed.addEventListener('click',function(){const list=document.getElementById('ord-obat-list');if(!list)return;if(list.querySelectorAll('[data-ranap-med-row]').length>=20){showToast('Maksimal 20 item per resep demo.','warning');return;}list.insertAdjacentHTML('beforeend',renderRanapMedicineRow(list.querySelectorAll('[data-ranap-med-row]').length));});
+  const medList=document.getElementById('ord-obat-list');if(medList)medList.querySelectorAll('[data-remove-ranap-med]').forEach(function(btn){btn.addEventListener('click',function(){const row=this.closest('[data-ranap-med-row]');if(row)row.remove();});});
   const pl = document.getElementById('btn-selesaikan-pulang'); if(pl) pl.addEventListener('click', function(){ selesaikanPulang(a.id); });
   const pb = document.getElementById('btn-pindah-bed'); if(pb) pb.addEventListener('click', function(){ pindahBedRanap(a.id); });
   const ck = document.getElementById('btn-cetak-resume'); if(ck) ck.addEventListener('click', function(){ cetakResumeMedis(a.id); });
@@ -8588,10 +8604,9 @@ function ranapOrderTabHtml(a){
   return (canWrite ? '<div class="panel"><div class="panel-head"><h2>Instruksi Baru</h2></div><div class="panel-body">'+
     '<div class="field"><label>Jenis</label><select id="ord-jenis"><option value="obat">Obat</option><option value="tindakan">Tindakan</option><option value="diet">Diet</option><option value="lab">Pemeriksaan Lab</option><option value="radiologi">Pemeriksaan Radiologi</option></select></div>'+
     '<div id="ord-obat-fields">'+
-      '<div class="resep-row"><select id="ord-obat-pilih">'+Store.data.medicines.map(function(m){ return '<option value="'+m.id+'">'+esc(m.nama)+' (stok '+m.stok+')</option>'; }).join('')+'</select>'+
-      '<input type="number" id="ord-obat-jumlah" placeholder="Jml" min="1" value="1">'+
-      '<input type="text" id="ord-obat-aturan" placeholder="Aturan pakai, mis: 3x1 IV"><span></span></div>'+
-      '<p class="hint">Instruksi obat otomatis terkirim sebagai resep ke Farmasi, dan stok/biayanya tersambung ke tagihan rawat inap.</p>'+
+      '<div id="ord-obat-list">'+renderRanapMedicineRow(0)+'</div>'+
+      '<button type="button" class="btn btn-outline btn-sm" id="btn-add-ranap-medicine">+ Tambah Obat</button>'+
+      '<p class="hint">Pilih obat dari master obat. Satu resep dapat berisi beberapa item; isi jumlah dan instruksi/dosis untuk setiap item. Farmasi memproses semua item dalam satu resep.</p>'+
     '</div>'+
     '<div id="ord-lain-fields" class="hidden">'+
       '<div class="field"><label>Detail Instruksi</label><input type="text" id="ord-detail" placeholder="mis: Ganti perban, GV luka"></div>'+
@@ -8714,16 +8729,27 @@ function submitOrder(admissionId){
   const patNama = esc(getPatient(a.patientId).nama);
 
   if(jenis==='obat'){
-    const medId = document.getElementById('ord-obat-pilih').value;
-    const jumlah = parseInt(document.getElementById('ord-obat-jumlah').value)||0;
-    const aturan = document.getElementById('ord-obat-aturan').value.trim();
-    if(jumlah<=0 || !aturan){ showToast('Lengkapi jumlah dan aturan pakai obat', 'danger'); return; }
-    const med = getMedicine(medId);
-    const resep = {id:uid('RSP'), visitId:null, admissionId:a.id, items:[{medicineId:medId, nama:med.nama, jumlah, hargaSatuan:med.harga, aturanPakai:aturan}], status:'menunggu', createdAt:nowISO()};
+    /* PENCARIAN KODE: MODUL: RAWAT INAP | SUBMODUL: SIMPAN RESEP MULTIOBAT */
+    const rows=Array.from(document.querySelectorAll('#ord-obat-list [data-ranap-med-row]'));
+    const items=[],seen=new Set();
+    for(const row of rows){
+      const medId=(row.querySelector('[data-ranap-med]')||{}).value||'';
+      const qty=parseInt((row.querySelector('[data-ranap-qty]')||{}).value,10)||0;
+      const rule=((row.querySelector('[data-ranap-rule]')||{}).value||'').trim();
+      if(!medId&&!rule&&qty===1)continue;
+      if(!medId||qty<=0||!rule){showToast('Setiap baris obat harus memiliki obat, jumlah positif, serta dosis/aturan pakai.','danger');return;}
+      if(seen.has(medId)){showToast('Obat yang sama tercantum lebih dari sekali. Gabungkan jumlahnya pada satu baris.','warning');return;}
+      seen.add(medId);const med=getMedicine(medId);if(!med){showToast('Obat tidak ditemukan pada master obat.','danger');return;}
+      items.push({medicineId:med.id,nama:med.nama,jumlah:qty,hargaSatuan:med.harga,aturanPakai:rule});
+    }
+    if(!items.length){showToast('Tambahkan minimal satu obat dari master obat.','danger');return;}
+    if(!a||a.status!=='dirawat'){showToast('Resep baru hanya dapat dibuat untuk admisi Rawat Inap yang masih aktif.','danger');return;}
+    const resep={id:uid('RSP'),visitId:null,admissionId:a.id,patientId:a.patientId,unit:'rawat-inap',jenisLayanan:'rawat_inap',items:items,status:'menunggu',orderStatus:'dibuat',orderedBy:Session.currentUser.id,orderedByName:Session.currentUser.nama,createdAt:nowISO(),updatedAt:nowISO()};
     Store.data.prescriptions.push(resep);
-    a.orders.push({id:uid('ORD'), waktu:nowISO(), dokterNama, jenis:'obat', detail:med.nama+' ×'+jumlah+' — '+aturan, status:'aktif', resepId:resep.id});
-    logAudit('instruksi_obat_ranap', patNama+' — '+med.nama+' ×'+jumlah+' (terkirim ke Farmasi)');
-    showToast('Instruksi obat tersimpan — terkirim ke Farmasi', 'success');
+    a.orders.push({id:uid('ORD'),waktu:nowISO(),dokterNama,jenis:'obat',detail:items.map(function(it){return it.nama+' ×'+it.jumlah+' — '+it.aturanPakai;}).join('; '),status:'aktif',resepId:resep.id});
+    logAudit('instruksi_obat_ranap',patNama+' — '+items.length+' item resep ('+items.map(function(it){return it.nama+' ×'+it.jumlah;}).join(', ')+')');
+    pushNotification('info','Resep Rawat Inap baru','Resep multiobat menunggu diproses Farmasi Rawat Inap.',a.patientId,null);
+    showToast('Resep '+items.length+' item tersimpan dan dikirim ke Farmasi Rawat Inap.','success');
   } else {
     const detail = document.getElementById('ord-detail').value.trim();
     if(!detail){ showToast('Isi detail instruksi', 'danger'); return; }
@@ -9353,9 +9379,17 @@ function renderIgdClinicalHtml(){
       const orders=Array.isArray(v.orders)?v.orders:[];
       return '<div class="history-item"><div><strong>'+esc(p?p.nama:'Pasien')+'</strong> · '+esc(v.noAntrian||v.id)+' <span class="badge badge-sage">Asesmen tersimpan</span></div><div class="hint">Prioritas: '+esc(igdPriorityLabel(v))+' · Status: '+esc((STATUS_MAP[v.status]||{label:v.status}).label)+'</div><div><strong>Diagnosis:</strong> '+esc(v.diagnosis)+'</div><div><strong>Catatan:</strong> '+esc(v.catatan||'-')+'</div>'+(v.labRequest?'<div class="alert alert-info">Laboratorium: '+esc(v.labRequest.jenis)+' · '+esc(v.labRequest.status)+(v.labRequest.hasil?'<br>Hasil: '+esc(v.labRequest.hasil)+(typeof ancillaryAttachmentLink==='function'?ancillaryAttachmentLink(v.labRequest.lampiran):''):'')+'</div>':'')+(v.radiologyRequest?'<div class="alert alert-info">Radiologi: '+esc(v.radiologyRequest.jenis)+' · '+esc(v.radiologyRequest.status)+(v.radiologyRequest.hasil?'<br>Hasil: '+esc(v.radiologyRequest.hasil)+(typeof ancillaryAttachmentLink==='function'?ancillaryAttachmentLink(v.radiologyRequest.lampiran):''):'')+'</div>':'')+(rx?'<div class="alert alert-info">Resep: '+esc((rx.items||[]).map(function(x){return x.nama+' ×'+x.jumlah;}).join(', '))+' · '+esc(rx.status)+'</div>':'')+'<div class="hint">Instruksi tercatat: '+orders.length+'</div>'+((v.labRequest&&v.labRequest.status==='selesai'||v.radiologyRequest&&v.radiologyRequest.status==='selesai')&&(!v.workflow||!v.workflow.supportingReviewedAt)&&(!v.labRequest||v.labRequest.status==='selesai')&&(!v.radiologyRequest||v.radiologyRequest.status==='selesai')?'<button class="btn btn-primary btn-sm" data-review-igd-results="'+v.id+'">Konfirmasi hasil telah ditinjau</button> ':'')+'<button class="btn btn-outline btn-sm" data-edit-igd-assessment="'+v.id+'">Buka asesmen / tindak lanjut</button></div>';
     }
-    return '<div class="history-item"><div><strong>'+esc(p?p.nama:'Pasien')+'</strong> · '+esc(v.noAntrian||v.id)+' <span class="badge badge-sage">'+esc((STATUS_MAP[v.status]||{label:v.status}).label)+'</span></div><div class="hint">Prioritas: '+esc(igdPriorityLabel(v))+' · Keluhan: '+esc(v.keluhan||'-')+'</div>'+(v.triage&&v.triage.summary?'<div class="alert alert-info">Ringkasan triase: '+esc(v.triage.summary)+'</div>':'')+(rx?'<div class="alert alert-info">Resep IGD: '+esc((rx.items||[]).map(function(x){return x.nama+' ×'+x.jumlah;}).join(', '))+' · '+esc(rx.status)+'</div>':'')+(v.labRequest?'<div class="alert alert-info"><strong>Laboratorium · '+esc(v.labRequest.jenis)+'</strong><div>Status: '+esc(v.labRequest.status)+'</div>'+(v.labRequest.hasil?'<div>Hasil: '+esc(v.labRequest.hasil)+'</div>':'')+'</div>':'')+(v.radiologyRequest?'<div class="alert alert-info"><strong>Radiologi · '+esc(v.radiologyRequest.jenis)+'</strong><div>Status: '+esc(v.radiologyRequest.status)+'</div>'+(v.radiologyRequest.hasil?'<div>Hasil: '+esc(v.radiologyRequest.hasil)+'</div>':'')+'</div>':'')+'<div class="field"><label>Diagnosis / asesmen IGD</label><input id="igd-dx-'+v.id+'" value="'+esc(v.forceEditAssessment?v.diagnosis||'':'')+'" placeholder="Diagnosis atau asesmen klinis"></div><div class="field"><label>Catatan klinis / rencana</label><textarea id="igd-note-'+v.id+'" placeholder="Rencana tindak lanjut dan disposisi">'+esc(v.forceEditAssessment?v.catatan||'':'')+'</textarea></div><div class="field"><label>Keputusan tindak lanjut</label><select id="igd-disposition-'+v.id+'"><option value="">Belum diputuskan</option>'+['observasi','pulang','rawat_jalan','rawat_inap','rujukan','meninggal'].map(function(x){return '<option value="'+x+'" '+((v.disposition||'')===x?'selected':'')+'>'+({'observasi':'Observasi IGD','pulang':'Pulang','rawat_jalan':'Rawat Jalan / kontrol','rawat_inap':'Rawat Inap','rujukan':'Rujuk keluar','meninggal':'Meninggal'})[x]+'</option>';}).join('')+'</select></div><div class="field"><label>Resep obat (opsional)</label><select id="igd-med-'+v.id+'"><option value="">Tidak menambah resep</option>'+Store.data.medicines.map(function(m){return '<option value="'+m.id+'">'+esc(m.nama)+' · stok '+m.stok+'</option>';}).join('')+'</select><div class="field-row"><input id="igd-qty-'+v.id+'" type="number" min="1" value="1" aria-label="Jumlah obat"><input id="igd-rule-'+v.id+'" placeholder="Aturan pakai / instruksi pemberian"></div></div><div class="field checkbox-row"><input type="checkbox" id="igd-lab-'+v.id+'"><label for="igd-lab-'+v.id+'">Minta Laboratorium</label></div><div class="field hidden" id="igd-lab-wrap-'+v.id+'"><input id="igd-lab-detail-'+v.id+'" placeholder="Jenis pemeriksaan laboratorium"></div><div class="field checkbox-row"><input type="checkbox" id="igd-rad-'+v.id+'"><label for="igd-rad-'+v.id+'">Minta Radiologi</label></div><div class="field hidden" id="igd-rad-wrap-'+v.id+'"><input id="igd-rad-detail-'+v.id+'" placeholder="Jenis pemeriksaan radiologi"></div><button class="btn btn-primary btn-sm" data-save-igd="'+v.id+'">Simpan Asesmen &amp; Instruksi</button></div>';
+    return '<div class="history-item"><div><strong>'+esc(p?p.nama:'Pasien')+'</strong> · '+esc(v.noAntrian||v.id)+' <span class="badge badge-sage">'+esc((STATUS_MAP[v.status]||{label:v.status}).label)+'</span></div><div class="hint">Prioritas: '+esc(igdPriorityLabel(v))+' · Keluhan: '+esc(v.keluhan||'-')+'</div>'+(v.triage&&v.triage.summary?'<div class="alert alert-info">Ringkasan triase: '+esc(v.triage.summary)+'</div>':'')+(rx?'<div class="alert alert-info">Resep IGD: '+esc((rx.items||[]).map(function(x){return x.nama+' ×'+x.jumlah;}).join(', '))+' · '+esc(rx.status)+'</div>':'')+(v.labRequest?'<div class="alert alert-info"><strong>Laboratorium · '+esc(v.labRequest.jenis)+'</strong><div>Status: '+esc(v.labRequest.status)+'</div>'+(v.labRequest.hasil?'<div>Hasil: '+esc(v.labRequest.hasil)+'</div>':'')+'</div>':'')+(v.radiologyRequest?'<div class="alert alert-info"><strong>Radiologi · '+esc(v.radiologyRequest.jenis)+'</strong><div>Status: '+esc(v.radiologyRequest.status)+'</div>'+(v.radiologyRequest.hasil?'<div>Hasil: '+esc(v.radiologyRequest.hasil)+'</div>':'')+'</div>':'')+'<div class="field"><label>Diagnosis / asesmen IGD</label><input id="igd-dx-'+v.id+'" value="'+esc(v.forceEditAssessment?v.diagnosis||'':'')+'" placeholder="Diagnosis atau asesmen klinis"></div><div class="field"><label>Catatan klinis / rencana</label><textarea id="igd-note-'+v.id+'" placeholder="Rencana tindak lanjut dan disposisi">'+esc(v.forceEditAssessment?v.catatan||'':'')+'</textarea></div><div class="field"><label>Keputusan tindak lanjut</label><select id="igd-disposition-'+v.id+'"><option value="">Belum diputuskan</option>'+['observasi','pulang','rawat_jalan','rawat_inap','rujukan','meninggal'].map(function(x){return '<option value="'+x+'" '+((v.disposition||'')===x?'selected':'')+'>'+({'observasi':'Observasi IGD','pulang':'Pulang','rawat_jalan':'Rawat Jalan / kontrol','rawat_inap':'Rawat Inap','rujukan':'Rujuk keluar','meninggal':'Meninggal'})[x]+'</option>';}).join('')+'</select></div><div class="field"><label>Resep obat (opsional, dapat lebih dari satu obat)</label><div id="igd-med-list-'+v.id+'">'+renderIgdMedicineRow(v.id,0)+'</div><button type="button" class="btn btn-outline btn-sm" data-add-igd-med="'+v.id+'">+ Tambah Obat</button><p class="hint">Pilih dari master obat; isi jumlah dan dosis/aturan pakai setiap item. Hindari memasukkan obat yang sama dua kali dalam satu resep.</p></div><div class="field checkbox-row"><input type="checkbox" id="igd-lab-'+v.id+'"><label for="igd-lab-'+v.id+'">Minta Laboratorium</label></div><div class="field hidden" id="igd-lab-wrap-'+v.id+'"><input id="igd-lab-detail-'+v.id+'" placeholder="Jenis pemeriksaan laboratorium"></div><div class="field checkbox-row"><input type="checkbox" id="igd-rad-'+v.id+'"><label for="igd-rad-'+v.id+'">Minta Radiologi</label></div><div class="field hidden" id="igd-rad-wrap-'+v.id+'"><input id="igd-rad-detail-'+v.id+'" placeholder="Jenis pemeriksaan radiologi"></div><button class="btn btn-primary btn-sm" data-save-igd="'+v.id+'">Simpan Asesmen &amp; Instruksi</button></div>';
   }).join('');
 }
+function renderIgdMedicineRow(visitId,index){
+  return '<div class="resep-row" data-igd-med-row style="margin-bottom:8px">'+
+    '<select data-igd-med-id="'+esc(visitId)+'" aria-label="Pilih obat"><option value="">Pilih obat dari master</option>'+Store.data.medicines.map(function(m){return '<option value="'+esc(m.id)+'">'+esc(m.nama)+' · stok '+m.stok+'</option>';}).join('')+'</select>'+
+    '<input type="number" data-igd-med-qty min="1" step="1" value="1" aria-label="Jumlah obat" placeholder="Jumlah">'+
+    '<input type="text" data-igd-med-rule maxlength="240" aria-label="Dosis dan aturan pakai" placeholder="Dosis/aturan pakai, mis. sesuai instruksi dokter">'+
+    (index>0?'<button type="button" class="btn btn-ghost btn-sm" data-remove-igd-med aria-label="Hapus obat">Hapus</button>':'<span></span>')+'</div>';
+}
+function bindIgdMedicineRemoveButtons(list){if(!list)return;list.querySelectorAll('[data-remove-igd-med]').forEach(function(btn){if(btn.dataset.bound==='1')return;btn.dataset.bound='1';btn.addEventListener('click',function(){const row=this.closest('[data-igd-med-row]');if(row)row.remove();});});}
 function markIgdResultsReviewed(visitId){
   if(!igdCanDoctor()){showToast('Hanya dokter IGD yang dapat mengonfirmasi peninjauan hasil.','danger');return;}
   const v=getVisit(visitId);if(!v||v.unit!=='igd')return;
@@ -9369,14 +9403,13 @@ function saveIgdClinicalOrders(visitId){
   if(!igdCanDoctor()){showToast('Instruksi klinis dan resep IGD hanya dapat dibuat dokter IGD atau admin demo.','danger');return;}
   const v=getVisit(visitId);if(!v||v.unit!=='igd')return;
   const dx=document.getElementById('igd-dx-'+visitId).value.trim(),note=document.getElementById('igd-note-'+visitId).value.trim();
-  const medId=document.getElementById('igd-med-'+visitId).value,labChk=document.getElementById('igd-lab-'+visitId).checked,radChk=document.getElementById('igd-rad-'+visitId).checked;
+  const medList=document.getElementById('igd-med-list-'+visitId),medRows=Array.from(medList?medList.querySelectorAll('[data-igd-med-row]'):[]),labChk=document.getElementById('igd-lab-'+visitId).checked,radChk=document.getElementById('igd-rad-'+visitId).checked;
+  const medItems=[],medSeen=new Set();for(const row of medRows){const medId=(row.querySelector('[data-igd-med-id]')||{}).value||'',qty=parseInt((row.querySelector('[data-igd-med-qty]')||{}).value,10)||0,rule=((row.querySelector('[data-igd-med-rule]')||{}).value||'').trim();if(!medId&&!rule&&qty===1)continue;if(!medId||qty<=0||!rule){showToast('Setiap baris obat harus memiliki obat, jumlah positif, dan dosis/aturan pakai.','danger');return;}if(medSeen.has(medId)){showToast('Obat yang sama dipilih lebih dari sekali. Gabungkan jumlahnya dalam satu baris.','warning');return;}medSeen.add(medId);const med=getMedicine(medId);if(!med){showToast('Obat tidak ditemukan pada master obat.','danger');return;}medItems.push({medicineId:med.id,nama:med.nama,jumlah:qty,hargaSatuan:med.harga,aturanPakai:rule});}
   const disposition=(document.getElementById('igd-disposition-'+visitId)||{}).value||'';
   const labDetail=labChk?document.getElementById('igd-lab-detail-'+visitId).value.trim():'',radDetail=radChk?document.getElementById('igd-rad-detail-'+visitId).value.trim():'';
-  const rule=medId?document.getElementById('igd-rule-'+visitId).value.trim():'';
   if(!dx){showToast('Isi diagnosis/asesmen IGD terlebih dahulu.','danger');return;}
-  const existingRx=medId?((Store.data.prescriptions||[]).find(function(r){return r.visitId===visitId&&r.unit==='igd'&&r.status==='menunggu';})||null):null;
-  if(medId&&existingRx&&(existingRx.items||[]).some(function(it){return it.medicineId===medId;})){showToast('Obat tersebut sudah ada pada resep yang menunggu. Pilih obat lain atau tinjau resep yang ada.','warning');return;}
-  if(medId&&!rule){showToast('Isi instruksi/aturan pemberian obat.','danger');return;}
+  const existingRx=medItems.length?((Store.data.prescriptions||[]).find(function(r){return r.visitId===visitId&&r.unit==='igd'&&r.status==='menunggu';})||null):null;
+  if(existingRx&&(existingRx.items||[]).some(function(it){return medSeen.has(it.medicineId);})){showToast('Salah satu obat sudah ada pada resep yang menunggu. Tinjau resep sebelumnya agar tidak duplikat.','warning');return;}
   if(labChk&&!labDetail){showToast('Isi jenis pemeriksaan Laboratorium.','danger');return;}
   if(radChk&&!radDetail){showToast('Isi jenis pemeriksaan Radiologi.','danger');return;}
   if((v.labRequest||((v.orders||[]).some(function(o){return ['laboratorium','lab'].includes(o.type)&&!['dibatalkan','ditolak'].includes(o.status);})))&&labChk){showToast('Permintaan Laboratorium sudah ada pada episode ini.','warning');return;}
@@ -9387,7 +9420,13 @@ function saveIgdClinicalOrders(visitId){
   v.clinicalHistory=Array.isArray(v.clinicalHistory)?v.clinicalHistory:[];
   v.clinicalHistory.push({id:uid('CLN'),jenis:'asesmen_igd',diagnosis:dx,catatan:note,disposition:disposition||null,waktu:v.updatedAt,oleh:Session.currentUser.id,olehNama:Session.currentUser.nama});
   v.orders=Array.isArray(v.orders)?v.orders:[];
-  if(medId){const med=getMedicine(medId),qty=Math.max(1,parseInt(document.getElementById('igd-qty-'+visitId).value,10)||1);let rx=existingRx;if(rx){rx.items.push({medicineId:med.id,nama:med.nama,jumlah:qty,hargaSatuan:med.harga,aturanPakai:rule});rx.updatedAt=nowISO();}else{rx={id:uid('RSP'),visitId:v.id,patientId:v.patientId,unit:'igd',jenisLayanan:'igd',items:[{medicineId:med.id,nama:med.nama,jumlah:qty,hargaSatuan:med.harga,aturanPakai:rule}],status:'menunggu',orderStatus:'dibuat',orderedBy:Session.currentUser.id,createdAt:nowISO(),updatedAt:nowISO(),siapAt:null,diambilAt:null};Store.data.prescriptions.push(rx);}v.resepId=rx.id;v.orders.push({id:uid('ORD'),type:'obat',prescriptionId:rx.id,detail:med.nama+' ×'+qty,status:'dibuat',createdAt:nowISO(),createdBy:Session.currentUser.id});notifyCareUnit(v.patientId,'farmasi-igd','Instruksi obat IGD baru','Obat '+med.nama+' · '+v.noAntrian+' · menunggu penerimaan Farmasi IGD');}
+  if(medItems.length){
+    /* PENCARIAN KODE: MODUL: IGD | SUBMODUL: SIMPAN RESEP MULTIOBAT */
+    let rx=existingRx;if(rx){rx.items.push.apply(rx.items,medItems);rx.updatedAt=nowISO();}
+    else{rx={id:uid('RSP'),visitId:v.id,patientId:v.patientId,unit:'igd',jenisLayanan:'igd',items:medItems,status:'menunggu',orderStatus:'dibuat',orderedBy:Session.currentUser.id,orderedByName:Session.currentUser.nama,createdAt:nowISO(),updatedAt:nowISO(),siapAt:null,diambilAt:null};Store.data.prescriptions.push(rx);}
+    v.resepId=rx.id;medItems.forEach(function(it){v.orders.push({id:uid('ORD'),type:'obat',prescriptionId:rx.id,detail:it.nama+' ×'+it.jumlah+' — '+it.aturanPakai,status:'dibuat',createdAt:nowISO(),createdBy:Session.currentUser.id});});
+    notifyCareUnit(v.patientId,'farmasi-igd','Instruksi obat IGD baru','Resep '+medItems.length+' item · '+v.noAntrian+' · menunggu penerimaan Farmasi IGD');
+  }
   if(labChk){v.labRequest={id:uid('LAB'),jenis:labDetail,status:'menunggu',hasil:null,unit:'igd',requestedAt:nowISO(),requestedBy:Session.currentUser.id};v.orders.push({id:v.labRequest.id,type:'laboratorium',detail:labDetail,status:'dibuat',createdAt:nowISO(),createdBy:Session.currentUser.id});createCareRequest(v,'lab','laboratorium',labDetail);}
   if(radChk){v.radiologyRequest={id:uid('RAD'),jenis:radDetail,status:'menunggu',hasil:null,unit:'igd',requestedAt:nowISO(),requestedBy:Session.currentUser.id};v.orders.push({id:v.radiologyRequest.id,type:'radiologi',detail:radDetail,status:'dibuat',createdAt:nowISO(),createdBy:Session.currentUser.id});createCareRequest(v,'radiologi','radiologi',radDetail);}
   if(disposition==='observasi'){v.status='observasi';v.disposition='observasi';v.workflow.observationStartedAt=nowISO();v.workflow.completedAt=null;}
@@ -9455,7 +9494,10 @@ function renderIgdDoctor(){
   const list=igdActiveVisits().filter(function(v){return !!(v.triage&&v.triage.level);});
   document.getElementById('main-content').innerHTML=pageIntro('Ruang kerja dokter: tinjau triase, lakukan asesmen medis, buat instruksi, dan tentukan disposisi. Pasien dengan prioritas lebih tinggi ditampilkan lebih dahulu.')+
     '<div class="panel"><div class="panel-head"><h2>Pasien Siap Dinilai · '+list.length+'</h2></div><div class="panel-body" id="igd-clinical-list">'+renderIgdClinicalHtml()+'</div></div>';
-  const clinical=document.getElementById('igd-clinical-list');if(clinical){clinical.querySelectorAll('[data-review-igd-results]').forEach(function(b){b.addEventListener('click',function(){markIgdResultsReviewed(this.dataset.reviewIgdResults);});});clinical.querySelectorAll('[data-edit-igd-assessment]').forEach(function(b){b.addEventListener('click',function(){const v=getVisit(this.dataset.editIgdAssessment);if(v){v.forceEditAssessment=true;renderIgdDoctor();}});});clinical.querySelectorAll('[data-save-igd]').forEach(function(b){b.addEventListener('click',function(){saveIgdClinicalOrders(this.dataset.saveIgd);});});clinical.querySelectorAll('[id^="igd-lab-"]').forEach(function(el){if(el.type==='checkbox')el.addEventListener('change',function(){const w=document.getElementById('igd-lab-wrap-'+this.id.replace('igd-lab-',''));if(w)w.classList.toggle('hidden',!this.checked);});});clinical.querySelectorAll('[id^="igd-rad-"]').forEach(function(el){if(el.type==='checkbox')el.addEventListener('change',function(){const w=document.getElementById('igd-rad-wrap-'+this.id.replace('igd-rad-',''));if(w)w.classList.toggle('hidden',!this.checked);});});}
+  const clinical=document.getElementById('igd-clinical-list');if(clinical){
+    clinical.querySelectorAll('[data-add-igd-med]').forEach(function(b){b.addEventListener('click',function(){const id=this.dataset.addIgdMed,list=document.getElementById('igd-med-list-'+id);if(!list)return;if(list.querySelectorAll('[data-igd-med-row]').length>=20){showToast('Maksimal 20 item per resep demo.','warning');return;}list.insertAdjacentHTML('beforeend',renderIgdMedicineRow(id,list.querySelectorAll('[data-igd-med-row]').length));bindIgdMedicineRemoveButtons(list);});});
+    clinical.querySelectorAll('[id^="igd-med-list-"]').forEach(bindIgdMedicineRemoveButtons);
+    clinical.querySelectorAll('[data-review-igd-results]').forEach(function(b){b.addEventListener('click',function(){markIgdResultsReviewed(this.dataset.reviewIgdResults);});});clinical.querySelectorAll('[data-edit-igd-assessment]').forEach(function(b){b.addEventListener('click',function(){const v=getVisit(this.dataset.editIgdAssessment);if(v){v.forceEditAssessment=true;renderIgdDoctor();}});});clinical.querySelectorAll('[data-save-igd]').forEach(function(b){b.addEventListener('click',function(){saveIgdClinicalOrders(this.dataset.saveIgd);});});clinical.querySelectorAll('[id^="igd-lab-"]').forEach(function(el){if(el.type==='checkbox')el.addEventListener('change',function(){const w=document.getElementById('igd-lab-wrap-'+this.id.replace('igd-lab-',''));if(w)w.classList.toggle('hidden',!this.checked);});});clinical.querySelectorAll('[id^="igd-rad-"]').forEach(function(el){if(el.type==='checkbox')el.addEventListener('change',function(){const w=document.getElementById('igd-rad-wrap-'+this.id.replace('igd-rad-',''));if(w)w.classList.toggle('hidden',!this.checked);});});}
 }
 /* -----------------------------------------------------------------
    MODUL: IGD — WORKSPACE PERAWAT PELAKSANA
