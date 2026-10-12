@@ -439,7 +439,8 @@ function submitOrder(admissionId){
 }
 function selesaikanPulang(admissionId){
   if(!Session.currentUser || !['dokter_ranap','admin'].includes(Session.currentUser.role)){showToast('Hanya dokter rawat inap yang dapat menyelesaikan pulang medis.','danger');return;}
-  const a = Store.data.admissions.find(x=>x.id===admissionId);
+  const a = Store.data.admissions.find(x=>x.id===admissionId);if(!a||a.status!=='dirawat'){showToast('Episode tidak aktif atau sudah dipulangkan.','warning');return;}
+  if(!window.confirm('Konfirmasi penyelesaian pulang medis? Status pasien dan ketersediaan bed akan berubah.'))return;
   const diagnosisAkhir = document.getElementById('pl-diagnosis').value.trim();
   if(!diagnosisAkhir){ showToast('Isi diagnosis akhir', 'danger'); return; }
   const hari = Math.max(1, Math.ceil((Date.now()-new Date(a.tanggalMasuk))/86400000));
@@ -541,6 +542,7 @@ function openAdmisiBaruSheet(){
 function submitAdmisiBaru(){
   if(!Session.currentUser||!['admin','admisi_ranap'].includes(Session.currentUser.role)){showToast('Konfirmasi admisi hanya dapat dilakukan petugas Admisi Rawat Inap atau admin demo.','danger');return;}
   if(!admisiBaruState.patientId){ showToast('Pilih pasien terlebih dahulu', 'danger'); return; }
+  if(!window.confirm('Konfirmasi admisi Rawat Inap? Pastikan identitas pasien, diagnosis, sumber rujukan, kelas, dan bed sudah benar.'))return;
   const bedId = document.getElementById('ab-bed').value;
   if(!bedId){ showToast('Tidak ada tempat tidur tersedia', 'danger'); return; }
   const diagnosisMasuk = document.getElementById('ab-diagnosis').value.trim();
