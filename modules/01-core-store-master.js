@@ -61,7 +61,7 @@
 const BIAYA_REGISTRASI = 10000;
 const BIAYA_LAB = 75000;
 const LOW_STOCK_THRESHOLD = 15;
-const PROTOTYPE_VERSION = 'v16.5.2';
+const PROTOTYPE_VERSION = 'v16.5.3';
 const PROTOTYPE_NAME = 'SIMRS PROTOTYPE';
 const PROTOTYPE_MODE = 'Portfolio / Demo';
 const QUEUE_JOURNEY = [
@@ -491,7 +491,8 @@ const INPATIENT_ROOM_SEED = [
   ['GED-C',1,'Adikara'],['GED-C',1,'Paramita'],['GED-C',1,'Srikandi'],
   ['GED-C',2,'Wening'],['GED-C',2,'Larasati'],['GED-C',2,'Candrakirana'],
   ['GED-C',3,'Bimasena'],['GED-C',3,'Arunika'],['GED-C',3,'Maheswari'],
-  ['GED-C',4,'Dharmawangsa'],['GED-C',4,'Jayendra'],['GED-C',4,'Satyawira']
+  ['GED-C',4,'Dharmawangsa'],['GED-C',4,'Jayendra'],['GED-C',4,'Satyawira'],
+  ['GED-K',1,'Anggrek Khusus'],['GED-K',1,'Melati Khusus'],['GED-K',2,'Intensif Khusus']
 ];
 const INPATIENT_NURSE_FIRST_NAMES=['Ayu','Dimas','Sinta','Fajar','Rina','Maya','Dewi','Budi','Nadia','Rizky','Putri','Aditya','Lestari','Bagas','Intan','Rafi','Citra','Agung','Nabila','Dedi','Wulan','Yoga','Nisa','Farhan','Anisa','Galih','Indah','Arif','Yuni','Reza','Vina','Dian','Bayu','Lia','Taufik','Sari','Naufal','Rosa','Andika','Fitri'];
 const INPATIENT_NURSE_LAST_NAMES=['Pratama','Lestari','Nugroho','Saputra','Anggraini','Kurniawan','Permata','Wibowo','Puspitasari','Setiawan','Ramadhan','Maharani','Santoso','Wijaya','Handayani','Firmansyah','Utami','Prakoso','Suryani','Hidayat','Susanto','Oktaviani','Putra','Safitri','Maulana','Kartika','Fauzi','Amalia','Wirawan','Kusuma','Rahmawati','Prameswari','Hartono','Yuliana','Permadi','Siregar','Wulandari','Syahputra','Damayanti','Febriani'];
@@ -514,7 +515,7 @@ function ensureInpatientStructure(data){
     const legacy=legacyRoomIds[index];
     return legacy || ('WARD-'+building+'-L'+floor+'-'+name.toUpperCase().replace(/[^A-Z0-9]+/g,'-'));
   };
-  const roomSeeds=INPATIENT_ROOM_SEED.map(function(x){const kelas=(x[0]==='GED-B'||x[0]==='GED-C')?(x[1]<=2?'3':x[1]===3?'2':'1'):'3';return {id:roomIdFor(x[0],x[1],x[2]),buildingId:x[0],buildingName:({ 'GED-A':'Gedung A — Rawat Inap Utama','GED-B':'Gedung B — Rawat Inap Terpadu (BPJS)','GED-C':'Gedung C — Rawat Inap Khusus (BPJS)'})[x[0]],floorNumber:x[1],floorName:'Lantai '+x[1],nama:x[2],kelas:kelas,penjaminDiizinkan:(x[0]==='GED-B'||x[0]==='GED-C')?['BPJS']:['Umum','Asuransi','KSO','BPJS'],tarifPerHari:150000,category:'reguler',locationManaged:true};});
+  const roomSeeds=INPATIENT_ROOM_SEED.map(function(x){const kelas=(x[0]==='GED-B'||x[0]==='GED-C')?(x[1]<=2?'3':x[1]===3?'2':'1'):(x[0]==='GED-K'?'Khusus':'3');return {id:roomIdFor(x[0],x[1],x[2]),buildingId:x[0],buildingName:({ 'GED-A':'Gedung A — Rawat Inap Utama','GED-B':'Gedung B — Rawat Inap Terpadu (BPJS)','GED-C':'Gedung C — Rawat Inap Khusus (BPJS)','GED-K':'Gedung Khusus — Perawatan Khusus'})[x[0]],floorNumber:x[1],floorName:'Lantai '+x[1],nama:x[2],kelas:kelas,penjaminDiizinkan:(x[0]==='GED-B'||x[0]==='GED-C')?['BPJS']:['Umum','Asuransi','KSO','BPJS'],tarifPerHari:150000,category:'reguler',locationManaged:true};});
   // Map the previous four general wards to the first four real structured rooms so existing admissions keep their ward IDs.
   const legacyNameMap={'W-K3':'Cendana','W-K3-MMP':'Mahoni','W-K2':'Meranti','W-K1':'Kenanga'};
   roomSeeds.forEach(function(seed,roomIndex){
