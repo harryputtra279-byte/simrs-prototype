@@ -51,8 +51,8 @@ if (duplicates.length) duplicates.forEach(([name, locations]) => fail(`Deklarasi
 else pass('Tidak ditemukan deklarasi fungsi global duplikat antar-modul');
 
 // Version and cache consistency.
-if (!html.includes('v16.5.3') || !core.includes("PROTOTYPE_VERSION = 'v16.5.3'") || !sw.includes("const SW_VERSION = 'v16.5.3'")) fail('Versi index/core service worker tidak seragam v16.5.3');
-else pass('Versi runtime, aset, dan Service Worker seragam v16.5.3');
+if (!html.includes('v16.5.8') || !core.includes("PROTOTYPE_VERSION = 'v16.5.8'") || !sw.includes("const SW_VERSION = 'v16.5.8'")) fail('Versi index/core service worker tidak seragam v16.5.8');
+else pass('Versi runtime, aset, dan Service Worker seragam v16.5.8');
 
 // Login demo grouping must remain presentational and expose the five agreed service units.
 const auth = read('modules/02-navigation-auth-shell.js');
@@ -90,6 +90,17 @@ const contracts = [
   ['IGD menghubungkan order ke penunjang dan Rawat Inap', igd.includes("createCareRequest(v,'lab'") && igd.includes("createCareRequest(v,'radiologi'") && igd.includes("createCareRequest(v,'rawat-inap'")],
 ];
 for (const [name, ok] of contracts) { if (ok) pass(name); else fail(name); }
+
+// V16.5.8 theme/login/building regressions.
+const theme = read('theme-system.js');
+const css = read('style.css');
+const themeContracts = [
+ ['Tema Aplikasi tersedia sebagai tab Master Data untuk Super User', inpatient.includes('Tema Aplikasi</button>') && inpatient.includes('SIMRS_THEME.renderMasterThemeTab()') && theme.includes('function isSuperUser()')],
+ ['Galeri tema tidak lagi memakai tombol mengambang', !css.includes('#simrs-theme-open{position:fixed') && !theme.includes('simrs-theme-open')],
+ ['Logo dan judul login memiliki glass styling sesuai markup aktual', css.includes('.login-emblem{') && css.includes('.login-hero h1{')],
+ ['Daftar gedung tidak disaring hanya karena tidak memiliki bed kosong', inpatient.includes('MASTER BED V16.5.8') && inpatient.includes('return (Store.data.wards||[]).slice();}')],
+];
+for (const [name, ok] of themeContracts) { if (ok) pass(name); else fail(name); }
 
 if (process.exitCode) process.exit(1);
 console.log('Stage 8 static integration contracts: PASS');
