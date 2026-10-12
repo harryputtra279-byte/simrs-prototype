@@ -61,7 +61,7 @@
 const BIAYA_REGISTRASI = 10000;
 const BIAYA_LAB = 75000;
 const LOW_STOCK_THRESHOLD = 15;
-const PROTOTYPE_VERSION = 'v16.5.0';
+const PROTOTYPE_VERSION = 'v16.5.1';
 const PROTOTYPE_NAME = 'SIMRS PROTOTYPE';
 const PROTOTYPE_MODE = 'Portfolio / Demo';
 const QUEUE_JOURNEY = [
@@ -929,6 +929,7 @@ function linkPrescriptionToVisit(resep, visit){
   if(!resep || !visit) return false;
   let changed=false;
   if(!resep.visitId){resep.visitId=visit.id;changed=true;}
+  if(!resep.patientId && visit.patientId){resep.patientId=visit.patientId;changed=true;}
   if(!visit.resepId){visit.resepId=resep.id;changed=true;}
   if(!resep.unit){resep.unit=resep.admissionId?'rawat-inap':(visit.unit||'rawat-jalan');changed=true;}
   if(!resep.jenisLayanan){resep.jenisLayanan=resep.admissionId?'rawat-inap':(visit.unit||'rawat-jalan');changed=true;}

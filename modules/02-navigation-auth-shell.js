@@ -556,7 +556,7 @@ function chipsForDemo(){
     '<div class="login-demo-hint">Pengelolaan konfigurasi, master data, akun, dan audit. Dipisahkan karena bukan unit pelayanan klinis.</div>'+
     '<div class="chip-row">'+make([['admin','Admin Sistem — Siti Rahayu','Hak akses administrator/superuser sesuai konfigurasi yang sudah ada.']])+'</div></div>';
   const grouped = sections.map(function(sec,index){
-    return '<details class="login-demo-section" data-demo-group="'+sec.id+'" '+(index===0?'open':'')+'>'+
+    return '<details class="login-demo-section" data-demo-group="'+sec.id+'">'+
       '<summary class="login-demo-summary"><span class="login-demo-summary-copy"><span class="login-demo-title">'+sec.title+'</span><span class="login-demo-hint">'+sec.hint+'</span></span><span class="login-demo-chevron" aria-hidden="true">⌄</span></summary>'+
       '<div class="login-demo-content"><div class="chip-row">'+make(sec.items)+'</div></div></details>';
   }).join('');

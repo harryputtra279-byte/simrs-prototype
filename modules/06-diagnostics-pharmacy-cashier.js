@@ -216,39 +216,44 @@ function switchFarmasiTab(tab){
 function renderFarmasiResepTab(){
   const ctx = routeContext(currentRoute()) || 'rawat-jalan';
   reconcileOutpatientPrescriptions();
-  const list = Store.data.visits.filter(function(v){
-    const unit=v.unit||'rawat-jalan', resep=getResepByVisit(v.id);
-    const matchesUnit=ctx==='igd'?unit==='igd':ctx==='rawat-inap'?false:unit==='rawat-jalan';
-    return matchesUnit && resep && resep.status==='menunggu' && !resep.admissionId && v.status!=='dibatalkan';
-  }).sort((a,b)=>new Date(a.createdAt||a.tanggal)-new Date(b.createdAt||b.tanggal));
+  /* PENCARIAN KODE: MODUL: FARMASI | SUBMODUL: ANTREAN PER RESEP
+     Antrean memakai record resep, bukan satu resep per kunjungan. Dengan begitu
+     resep lanjutan setelah resep sebelumnya disiapkan tetap muncul sebagai antrean baru. */
+  const list = (Store.data.prescriptions||[]).filter(function(resep){
+    if(!resep.visitId||resep.admissionId||resep.status!=='menunggu')return false;
+    const visit=getVisit(resep.visitId);if(!visit||visit.status==='dibatalkan'||visit.patientId!==resep.patientId)return false;
+    const unit=visit.unit||'rawat-jalan';
+    return ctx==='igd'?unit==='igd':ctx==='rawat-inap'?false:unit==='rawat-jalan';
+  }).sort(function(a,b){return new Date(a.createdAt||0)-new Date(b.createdAt||0);});
   const area = document.getElementById('farmasi-tab-area');
   if(list.length===0){ area.innerHTML = '<div class="panel"><div class="panel-body"><div class="empty"><div class="big">✓</div>Tidak ada resep yang menunggu diracik.</div></div></div>'; return; }
-  area.innerHTML = list.map(v=>{
-    const p = getPatient(v.patientId), poli = getPoli(v.poliId), resep = getResepByVisit(v.id), asal = v.unit==='igd'?'IGD':poli.nama;
-    if(!p || !resep) return '';
+  area.innerHTML = list.map(function(resep){
+    const v=getVisit(resep.visitId),p=getPatient(resep.patientId),poli=v&&getPoli(v.poliId),asal=v&&v.unit==='igd'?'IGD':(poli?poli.nama:'Rawat Jalan');
+    if(!p||!v)return '';
     return '<div class="panel" style="margin-bottom:10px"><div class="panel-body">'+
       '<div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:10px">'+
-        '<div><strong>'+esc(p.nama)+'</strong> <span class="mono" style="color:var(--ink-soft)">('+p.id+')</span><br>'+
-        '<span style="font-size:13px;color:var(--ink-soft)">Dari '+esc(asal)+' &middot; No. Antrian '+v.noAntrian+'</span></div>'+badgeStatus('menunggu_farmasi')+
+        '<div><strong>'+esc(p.nama)+'</strong> <span class="mono" style="color:var(--ink-soft)">('+esc(p.id)+')</span><br>'+
+        '<span style="font-size:13px;color:var(--ink-soft)">Dari '+esc(asal)+' · No. Antrian '+esc(v.noAntrian||v.id)+' · Resep '+esc(resep.id)+'</span></div>'+badgeStatus('menunggu_farmasi')+
       '</div>'+
       '<div class="table-wrap"><table><thead><tr><th>Obat</th><th>Diminta</th><th>Stok Tersedia</th><th>Disiapkan</th><th>Aturan Pakai</th></tr></thead><tbody>'+
-      resep.items.map((it,idx)=>{
-        const med = getMedicine(it.medicineId), cukup = med.stok >= it.jumlah;
+      (resep.items||[]).map(function(it,idx){
+        const med=getMedicine(it.medicineId);if(!med)return '<tr><td>'+esc(it.nama||'Obat tidak ditemukan')+'</td><td>'+it.jumlah+'</td><td colspan="3">Obat tidak ditemukan pada master; perbaiki master sebelum diproses.</td></tr>';
+        const cukup=Number(med.stok)>=Number(it.jumlah);
         return '<tr><td>'+esc(it.nama)+'</td><td class="mono">'+it.jumlah+'</td>'+
           '<td class="mono" style="color:'+(cukup?'var(--sage)':'var(--brick)')+';font-weight:700">'+med.stok+'</td>'+
           '<td><input type="number" min="0" max="'+med.stok+'" value="'+Math.min(it.jumlah,med.stok)+'" style="width:80px" id="siap-'+resep.id+'-'+idx+'"></td>'+
-          '<td>'+esc(it.aturanPakai)+'</td></tr>';
+          '<td>'+esc(it.aturanPakai||'-')+'</td></tr>';
       }).join('')+'</tbody></table></div>'+
-      (resep.items.some(it=>getMedicine(it.medicineId).stok < it.jumlah) ? '<div class="alert alert-warning" style="margin-top:10px">⚠ Ada obat dengan stok tidak mencukupi. Jumlah "Disiapkan" otomatis dibatasi sesuai stok — sesuaikan bila perlu.</div>' : '')+
+      ((resep.items||[]).some(function(it){const med=getMedicine(it.medicineId);return !med||Number(med.stok)<Number(it.jumlah);})?'<div class="alert alert-warning" style="margin-top:10px">⚠ Ada item dengan stok tidak mencukupi atau master obat tidak ditemukan. Periksa sebelum menyiapkan.</div>':'')+
       '<button class="btn btn-primary btn-sm" style="margin-top:8px" data-siapkan="'+resep.id+'" data-visit="'+v.id+'">Siapkan Obat</button>'+
     '</div></div>';
   }).join('');
-  area.querySelectorAll('[data-siapkan]').forEach(btn=> btn.addEventListener('click', ()=> siapkanObat(btn.dataset.siapkan, btn.dataset.visit)));
+  area.querySelectorAll('[data-siapkan]').forEach(function(btn){btn.addEventListener('click',function(){siapkanObat(btn.dataset.siapkan,btn.dataset.visit);});});
 }
 function siapkanObat(resepId, visitId){
   if(!Session.currentUser||!['farmasi','admin'].includes(Session.currentUser.role)){showToast('Pemrosesan resep hanya dapat dilakukan petugas Farmasi atau admin demo.','danger');return;}
   const resep = getResep(resepId), visit = getVisit(visitId);
-  if(!resep || !visit || getResepByVisit(visitId)?.id!==resepId){showToast('Resep dan kunjungan pasien tidak terhubung. Muat ulang antrean farmasi.','danger');return;}
+  if(!resep || !visit || resep.visitId!==visitId || resep.patientId!==visit.patientId || (visit.unit==='igd' && resep.unit!=='igd')){showToast('Resep dan kunjungan pasien tidak terhubung. Muat ulang antrean farmasi.','danger');return;}
   if(resep.status!=='menunggu'){showToast('Resep ini sudah diproses; cegah stok terpotong dua kali.','warning');return;}
   let totalObat=0;const reservedByMedicine={};
   for(let idx=0;idx<resep.items.length;idx++){

@@ -204,10 +204,26 @@ function renderRanapDetailBody(a){
   else el.innerHTML = ranapPulangTabHtml(a);
   bindRanapDetailEvents(a);
 }
+/* =================================================================
+   MODUL: RAWAT INAP — PENYUSUN RESEP MULTIOBAT
+   PENCARIAN KODE: MODUL: RAWAT INAP | FUNGSI: renderRanapMedicineRow
+   Tujuan: satu resep dapat berisi beberapa item dari master obat; setiap item
+   memiliki jumlah dan instruksi sendiri. Validasi dilakukan kembali saat simpan.
+   ================================================================= */
+function renderRanapMedicineRow(index){
+  return '<div class="resep-row" data-ranap-med-row style="margin-bottom:8px">'+
+    '<select data-ranap-med name="ranap-med-'+index+'"><option value="">Pilih obat dari master</option>'+Store.data.medicines.map(function(m){return '<option value="'+esc(m.id)+'">'+esc(m.nama)+' · stok '+m.stok+'</option>';}).join('')+'</select>'+
+    '<input type="number" data-ranap-qty min="1" step="1" value="1" aria-label="Jumlah obat" placeholder="Jumlah">'+
+    '<input type="text" data-ranap-rule maxlength="240" aria-label="Dosis dan aturan pakai" placeholder="Dosis/aturan pakai, mis. 3x1 sesudah makan">'+
+    (index>0?'<button type="button" class="btn btn-ghost btn-sm" data-remove-ranap-med aria-label="Hapus obat">Hapus</button>':'<span></span>')+'</div>';
+}
 function bindRanapDetailEvents(a){
   const c = document.getElementById('btn-tambah-cppt'); if(c) c.addEventListener('click', function(){ submitCppt(a.id); });
   const v = document.getElementById('btn-tambah-vital'); if(v) v.addEventListener('click', function(){ submitVital(a.id); });
   const o = document.getElementById('btn-tambah-order'); if(o) o.addEventListener('click', function(){ submitOrder(a.id); });
+  const addMed=document.getElementById('btn-add-ranap-medicine');
+  if(addMed)addMed.addEventListener('click',function(){const list=document.getElementById('ord-obat-list');if(!list)return;if(list.querySelectorAll('[data-ranap-med-row]').length>=20){showToast('Maksimal 20 item per resep demo.','warning');return;}list.insertAdjacentHTML('beforeend',renderRanapMedicineRow(list.querySelectorAll('[data-ranap-med-row]').length));});
+  const medList=document.getElementById('ord-obat-list');if(medList)medList.querySelectorAll('[data-remove-ranap-med]').forEach(function(btn){btn.addEventListener('click',function(){const row=this.closest('[data-ranap-med-row]');if(row)row.remove();});});
   const pl = document.getElementById('btn-selesaikan-pulang'); if(pl) pl.addEventListener('click', function(){ selesaikanPulang(a.id); });
   const pb = document.getElementById('btn-pindah-bed'); if(pb) pb.addEventListener('click', function(){ pindahBedRanap(a.id); });
   const ck = document.getElementById('btn-cetak-resume'); if(ck) ck.addEventListener('click', function(){ cetakResumeMedis(a.id); });
@@ -282,10 +298,9 @@ function ranapOrderTabHtml(a){
   return (canWrite ? '<div class="panel"><div class="panel-head"><h2>Instruksi Baru</h2></div><div class="panel-body">'+
     '<div class="field"><label>Jenis</label><select id="ord-jenis"><option value="obat">Obat</option><option value="tindakan">Tindakan</option><option value="diet">Diet</option><option value="lab">Pemeriksaan Lab</option><option value="radiologi">Pemeriksaan Radiologi</option></select></div>'+
     '<div id="ord-obat-fields">'+
-      '<div class="resep-row"><select id="ord-obat-pilih">'+Store.data.medicines.map(function(m){ return '<option value="'+m.id+'">'+esc(m.nama)+' (stok '+m.stok+')</option>'; }).join('')+'</select>'+
-      '<input type="number" id="ord-obat-jumlah" placeholder="Jml" min="1" value="1">'+
-      '<input type="text" id="ord-obat-aturan" placeholder="Aturan pakai, mis: 3x1 IV"><span></span></div>'+
-      '<p class="hint">Instruksi obat otomatis terkirim sebagai resep ke Farmasi, dan stok/biayanya tersambung ke tagihan rawat inap.</p>'+
+      '<div id="ord-obat-list">'+renderRanapMedicineRow(0)+'</div>'+
+      '<button type="button" class="btn btn-outline btn-sm" id="btn-add-ranap-medicine">+ Tambah Obat</button>'+
+      '<p class="hint">Pilih obat dari master obat. Satu resep dapat berisi beberapa item; isi jumlah dan instruksi/dosis untuk setiap item. Farmasi memproses semua item dalam satu resep.</p>'+
     '</div>'+
     '<div id="ord-lain-fields" class="hidden">'+
       '<div class="field"><label>Detail Instruksi</label><input type="text" id="ord-detail" placeholder="mis: Ganti perban, GV luka"></div>'+
@@ -408,16 +423,27 @@ function submitOrder(admissionId){
   const patNama = esc(getPatient(a.patientId).nama);
 
   if(jenis==='obat'){
-    const medId = document.getElementById('ord-obat-pilih').value;
-    const jumlah = parseInt(document.getElementById('ord-obat-jumlah').value)||0;
-    const aturan = document.getElementById('ord-obat-aturan').value.trim();
-    if(jumlah<=0 || !aturan){ showToast('Lengkapi jumlah dan aturan pakai obat', 'danger'); return; }
-    const med = getMedicine(medId);
-    const resep = {id:uid('RSP'), visitId:null, admissionId:a.id, items:[{medicineId:medId, nama:med.nama, jumlah, hargaSatuan:med.harga, aturanPakai:aturan}], status:'menunggu', createdAt:nowISO()};
+    /* PENCARIAN KODE: MODUL: RAWAT INAP | SUBMODUL: SIMPAN RESEP MULTIOBAT */
+    const rows=Array.from(document.querySelectorAll('#ord-obat-list [data-ranap-med-row]'));
+    const items=[],seen=new Set();
+    for(const row of rows){
+      const medId=(row.querySelector('[data-ranap-med]')||{}).value||'';
+      const qty=parseInt((row.querySelector('[data-ranap-qty]')||{}).value,10)||0;
+      const rule=((row.querySelector('[data-ranap-rule]')||{}).value||'').trim();
+      if(!medId&&!rule&&qty===1)continue;
+      if(!medId||qty<=0||!rule){showToast('Setiap baris obat harus memiliki obat, jumlah positif, serta dosis/aturan pakai.','danger');return;}
+      if(seen.has(medId)){showToast('Obat yang sama tercantum lebih dari sekali. Gabungkan jumlahnya pada satu baris.','warning');return;}
+      seen.add(medId);const med=getMedicine(medId);if(!med){showToast('Obat tidak ditemukan pada master obat.','danger');return;}
+      items.push({medicineId:med.id,nama:med.nama,jumlah:qty,hargaSatuan:med.harga,aturanPakai:rule});
+    }
+    if(!items.length){showToast('Tambahkan minimal satu obat dari master obat.','danger');return;}
+    if(!a||a.status!=='dirawat'){showToast('Resep baru hanya dapat dibuat untuk admisi Rawat Inap yang masih aktif.','danger');return;}
+    const resep={id:uid('RSP'),visitId:null,admissionId:a.id,patientId:a.patientId,unit:'rawat-inap',jenisLayanan:'rawat_inap',items:items,status:'menunggu',orderStatus:'dibuat',orderedBy:Session.currentUser.id,orderedByName:Session.currentUser.nama,createdAt:nowISO(),updatedAt:nowISO()};
     Store.data.prescriptions.push(resep);
-    a.orders.push({id:uid('ORD'), waktu:nowISO(), dokterNama, jenis:'obat', detail:med.nama+' ×'+jumlah+' — '+aturan, status:'aktif', resepId:resep.id});
-    logAudit('instruksi_obat_ranap', patNama+' — '+med.nama+' ×'+jumlah+' (terkirim ke Farmasi)');
-    showToast('Instruksi obat tersimpan — terkirim ke Farmasi', 'success');
+    a.orders.push({id:uid('ORD'),waktu:nowISO(),dokterNama,jenis:'obat',detail:items.map(function(it){return it.nama+' ×'+it.jumlah+' — '+it.aturanPakai;}).join('; '),status:'aktif',resepId:resep.id});
+    logAudit('instruksi_obat_ranap',patNama+' — '+items.length+' item resep ('+items.map(function(it){return it.nama+' ×'+it.jumlah;}).join(', ')+')');
+    pushNotification('info','Resep Rawat Inap baru','Resep multiobat menunggu diproses Farmasi Rawat Inap.',a.patientId,null);
+    showToast('Resep '+items.length+' item tersimpan dan dikirim ke Farmasi Rawat Inap.','success');
   } else {
     const detail = document.getElementById('ord-detail').value.trim();
     if(!detail){ showToast('Isi detail instruksi', 'danger'); return; }
