@@ -51,8 +51,8 @@ if (duplicates.length) duplicates.forEach(([name, locations]) => fail(`Deklarasi
 else pass('Tidak ditemukan deklarasi fungsi global duplikat antar-modul');
 
 // Version and cache consistency.
-if (!html.includes('v16.5.8') || !core.includes("PROTOTYPE_VERSION = 'v16.5.8'") || !sw.includes("const SW_VERSION = 'v16.5.8'")) fail('Versi index/core service worker tidak seragam v16.5.8');
-else pass('Versi runtime, aset, dan Service Worker seragam v16.5.8');
+if (!html.includes('v16.5.10') || !core.includes("PROTOTYPE_VERSION = 'v16.5.10'") || !sw.includes("const SW_VERSION = 'v16.5.10'")) fail('Versi index/core service worker tidak seragam v16.5.10');
+else pass('Versi runtime, aset, dan Service Worker seragam v16.5.10');
 
 // Login demo grouping must remain presentational and expose the five agreed service units.
 const auth = read('modules/02-navigation-auth-shell.js');
@@ -142,3 +142,12 @@ else fail('V16.5.2: urutan kartu resep IGD tidak sesuai');
 
 if (inpatient.includes('return ranapPrescriptionComposerHtml(a)+(canWrite') && inpatient.includes('Kirim Resep ke Farmasi Rawat Inap')) pass('V16.5.2: kartu resep Rawat Inap tampil pada layar klinis utama sebelum CPPT/asesmen');
 else fail('V16.5.2: kartu resep Rawat Inap tidak tampil pada layar klinis utama');
+
+// V16.5.10: tema harus memiliki alur pilih -> pratinjau -> terapkan.
+const themeV16510 = read('theme-system.js');
+for (const [name, ok] of [
+ ['Tombol Pratinjau tersedia', themeV16510.includes('id="simrs-theme-preview"') && themeV16510.includes("paint(t);root.querySelector('#simrs-theme-selected-label').textContent='Pratinjau aktif:")],
+ ['Tombol Terapkan Tema tersedia', themeV16510.includes('id="simrs-theme-apply"') && themeV16510.includes('apply(t);root.querySelector')],
+ ['Memilih kartu tidak langsung menerapkan tema', themeV16510.includes("b.onclick=()=>{root.dataset.selectedTheme=t.id")],
+ ['Cache dinaikkan ke 16.5.10', read('sw.js').includes('v16.5.10')],
+]) { if (ok) pass(name); else fail(name); }
