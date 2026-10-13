@@ -51,8 +51,8 @@ if (duplicates.length) duplicates.forEach(([name, locations]) => fail(`Deklarasi
 else pass('Tidak ditemukan deklarasi fungsi global duplikat antar-modul');
 
 // Version and cache consistency.
-if (!html.includes('v16.5.10') || !core.includes("PROTOTYPE_VERSION = 'v16.5.10'") || !sw.includes("const SW_VERSION = 'v16.5.10'")) fail('Versi index/core service worker tidak seragam v16.5.10');
-else pass('Versi runtime, aset, dan Service Worker seragam v16.5.10');
+if (!html.includes('v16.5.12') || !core.includes("PROTOTYPE_VERSION = 'v16.5.12'") || !sw.includes("const SW_VERSION = 'v16.5.12'")) fail('Versi index/core service worker tidak seragam v16.5.12');
+else pass('Versi runtime, aset, dan Service Worker seragam v16.5.12');
 
 // Login demo grouping must remain presentational and expose the five agreed service units.
 const auth = read('modules/02-navigation-auth-shell.js');
@@ -143,11 +143,22 @@ else fail('V16.5.2: urutan kartu resep IGD tidak sesuai');
 if (inpatient.includes('return ranapPrescriptionComposerHtml(a)+(canWrite') && inpatient.includes('Kirim Resep ke Farmasi Rawat Inap')) pass('V16.5.2: kartu resep Rawat Inap tampil pada layar klinis utama sebelum CPPT/asesmen');
 else fail('V16.5.2: kartu resep Rawat Inap tidak tampil pada layar klinis utama');
 
-// V16.5.10: tema harus memiliki alur pilih -> pratinjau -> terapkan.
+// V16.5.12: tema harus memiliki alur pilih -> pratinjau -> terapkan.
 const themeV16510 = read('theme-system.js');
 for (const [name, ok] of [
  ['Tombol Pratinjau tersedia', themeV16510.includes('id="simrs-theme-preview"') && themeV16510.includes("paint(t);root.querySelector('#simrs-theme-selected-label').textContent='Pratinjau aktif:")],
  ['Tombol Terapkan Tema tersedia', themeV16510.includes('id="simrs-theme-apply"') && themeV16510.includes('apply(t);root.querySelector')],
  ['Memilih kartu tidak langsung menerapkan tema', themeV16510.includes("b.onclick=()=>{root.dataset.selectedTheme=t.id")],
- ['Cache dinaikkan ke 16.5.10', read('sw.js').includes('v16.5.10')],
+ ['Cache dinaikkan ke 16.5.12', read('sw.js').includes('v16.5.12')],
 ]) { if (ok) pass(name); else fail(name); }
+
+// V16.5.12: manual IGD registration, outside-dismiss modal, and 20/20 theme categories.
+const themeV16512 = read('theme-system.js');
+if (igd.includes('Daftarkan pasien baru secara manual') && igd.includes('igd-reg-new-name') && igd.includes('identityStatus')) pass('V16.5.12: registrasi pasien baru manual tersedia pada alur IGD');
+else fail('V16.5.12: form pasien baru manual IGD belum lengkap');
+if (themeV16512.includes('const NATURE_THEMES=') && (themeV16512.match(/"nature": true/g)||[]).length===20) pass('V16.5.12: 20 tema Nature Glassmorphism');
+else fail('V16.5.12: jumlah tema Nature tidak 20');
+if ((themeV16512.match(/"pattern":/g)||[]).length===20) pass('V16.5.12: 20 tema Batik Glassmorphism');
+else fail('V16.5.12: jumlah tema Batik tidak 20');
+if (themeV16512.includes('outsideDismissBound') && themeV16512.includes("e.key==='Escape'")) pass('V16.5.12: modal tema mendukung klik luar dan tombol Escape');
+else fail('V16.5.12: mekanisme tutup modal belum lengkap');
