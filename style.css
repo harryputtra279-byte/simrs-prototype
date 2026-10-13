@@ -1212,3 +1212,24 @@ html[data-theme-kind="batik"] .panel,html[data-theme-kind="batik"] .sidebar,html
 #simrs-theme-panel .theme-category-tabs{position:sticky;top:-20px;z-index:2;padding:8px 0;background:rgba(255,255,255,.88);backdrop-filter:blur(14px)}
 #simrs-theme-panel .theme-category{min-height:42px}
 @media(max-width:600px){.igd-manual-patient-fields .field-row{grid-template-columns:minmax(0,1fr)}#simrs-theme-panel{padding:8px}#simrs-theme-panel .theme-window{max-height:94dvh;padding:14px;border-radius:22px}#simrs-theme-panel .theme-category{flex:1 1 100%;text-align:center}}
+
+
+/* PENCARIAN KODE: V16.5.13 — motif Nature Glassmorphism yang terlihat, bukan sekadar pergantian warna.
+   Motif dibuat lewat CSS lokal agar tidak bergantung pada gambar eksternal atau koneksi internet. */
+:root[data-theme-kind="nature"] body{background-attachment:fixed!important}
+body:has(#app){} /* Kompatibilitas: aturan motif utama menggunakan pseudo-element root di bawah. */
+html[data-theme-kind="nature"]::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:-1;opacity:.16;background-repeat:repeat;background-size:220px 180px;background-image:radial-gradient(ellipse at 25% 25%,var(--accent-2) 0 2px,transparent 3px),radial-gradient(ellipse at 75% 70%,var(--accent) 0 2px,transparent 3px)}
+html[data-theme-kind="nature"][data-theme-id="bamboo-zen"]::before{opacity:.22;background-size:90px 180px;background-image:repeating-linear-gradient(88deg,transparent 0 22px,var(--accent) 23px 27px,transparent 28px 48px),radial-gradient(ellipse at 30% 25%,var(--accent-2) 0 10px,transparent 12px),radial-gradient(ellipse at 70% 65%,var(--accent-2) 0 9px,transparent 11px)}
+html[data-theme-kind="nature"][data-theme-id="starlit-mountain"]::before,html[data-theme-kind="nature"][data-theme-id="alpine-mist"]::before{opacity:.18;background-size:260px 150px;background-image:linear-gradient(135deg,transparent 42%,var(--accent) 43% 47%,transparent 48%),linear-gradient(45deg,transparent 40%,var(--accent-2) 41% 46%,transparent 47%);}
+html[data-theme-kind="nature"][data-theme-id="ocean-tide"]::before,html[data-theme-kind="nature"][data-theme-id="coral-reef"]::before{opacity:.18;background-size:180px 100px;background-image:radial-gradient(ellipse at 50% 110%,transparent 0 38%,var(--accent) 39% 41%,transparent 42%),radial-gradient(ellipse at 10% 100%,transparent 0 38%,var(--accent-2) 39% 41%,transparent 42%)}
+html[data-theme-kind="nature"][data-theme-id="sakura-garden"]::before,html[data-theme-kind="nature"][data-theme-id="wildflower-meadow"]::before{opacity:.2;background-size:120px 120px;background-image:radial-gradient(ellipse at 50% 25%,var(--accent-2) 0 7px,transparent 8px),radial-gradient(ellipse at 25% 50%,var(--accent-2) 0 7px,transparent 8px),radial-gradient(ellipse at 75% 50%,var(--accent-2) 0 7px,transparent 8px),radial-gradient(ellipse at 50% 75%,var(--accent-2) 0 7px,transparent 8px)}
+/* PENCARIAN KODE: NAV ICON NORMALIZATION — satu ukuran, posisi, dan wadah untuk seluruh navbar. */
+.bottom-tabbar .tab-item .ic,.nav-item .ic{display:inline-flex;align-items:center;justify-content:center;flex:0 0 1.6rem;width:1.6rem;height:1.6rem;min-width:1.6rem;font-size:1.1rem;line-height:1;vertical-align:middle;text-align:center;}
+.bottom-tabbar .tab-item{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;line-height:1.15}
+/* Tombol pendaftaran manual selalu terlihat meskipun native select menyembunyikan opsi panjang. */
+.igd-manual-registration-toggle{margin:8px 0 10px;min-height:40px;border:1px solid var(--accent)!important;border-radius:14px!important;white-space:normal}
+.igd-manual-patient-fields[hidden]{display:none!important}
+.igd-manual-patient-fields:not([hidden]){display:block!important;margin:10px 0;padding:14px;border:1px solid var(--simrs-glass-border,rgba(100,100,100,.3));border-radius:18px;background:var(--simrs-glass-surface,rgba(255,255,255,.45));}
+.theme-swatch{display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative}
+.theme-swatch>span{font-size:28px;filter:drop-shadow(0 2px 3px rgba(0,0,0,.2));}
+.theme-swatch.nature-swatch{background-image:linear-gradient(135deg,var(--swatch-a),var(--swatch-b)),radial-gradient(ellipse at 20% 80%,rgba(255,255,255,.7),transparent 40%)!important}
