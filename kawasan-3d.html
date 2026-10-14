@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#16152b"><title>Kawasan 3D — SIMRS PROTOTYPE</title>
+<style>
+:root{color-scheme:dark;--bg:#111126;--panel:rgba(255,255,255,.09);--line:rgba(255,255,255,.18);--cyan:#8ce7f0;--pink:#f4a1d2;--purple:#a99aff}*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% 0,#37305f 0,#191832 42%,var(--bg) 78%);color:#f7f5ff;font:15px/1.5 system-ui,-apple-system,sans-serif}.wrap{max-width:1200px;margin:auto;padding:20px}.top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}.eyebrow{color:var(--cyan);font-size:.76rem;letter-spacing:.14em;font-weight:800}.title{font-size:clamp(1.5rem,4vw,2.5rem);margin:.15rem 0}.muted{color:#c3c1dd}.pill,.btn{border:1px solid var(--line);background:var(--panel);color:inherit;border-radius:999px;padding:9px 13px}.layout{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(260px,.8fr);gap:16px;margin-top:18px}.glass{background:var(--panel);border:1px solid var(--line);border-radius:22px;box-shadow:0 18px 60px #05051155;backdrop-filter:blur(18px)}.scene{padding:10px;overflow:hidden;min-height:480px;display:grid;place-items:center;background:linear-gradient(145deg,#b9e8e51a,#a58cff12)}svg{width:100%;height:auto;max-height:650px}.ground{fill:#263a4b;stroke:#6ebdc2;stroke-opacity:.3}.road{fill:none;stroke:#627b8c;stroke-width:22;stroke-linecap:round;stroke-linejoin:round}.roadline{fill:none;stroke:#d8e5e8;stroke-opacity:.5;stroke-width:1.5;stroke-dasharray:8 8}.building{cursor:pointer;outline:none;transition:filter .2s}.building:hover,.building:focus,.building.active{filter:drop-shadow(0 0 10px #a99aff)}.building.active .front{stroke:#fff;stroke-width:2}.roof{fill:#a99aff;stroke:#e6e1ff;stroke-opacity:.8}.side{fill:#5967a0;stroke:#b8c3ff;stroke-opacity:.45}.front{fill:#748bb7;stroke:#d7e4ff;stroke-opacity:.55}.window{fill:#a7f1ee;opacity:.8}.label{fill:#fff;font-size:13px;font-weight:700;paint-order:stroke;stroke:#20213c;stroke-width:3px;stroke-linejoin:round}.trees{fill:#60c4a0;stroke:#b6f4dc;stroke-opacity:.5}.detail{padding:20px}.detail h2{margin:.3rem 0}.detail .icon{font-size:2rem}.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:16px 0}.stat{padding:12px;border:1px solid var(--line);border-radius:14px;background:#ffffff08}.stat b{display:block;font-size:1.25rem}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}.btn{cursor:pointer}.btn.primary{background:linear-gradient(120deg,#7567d9,#c16cae);border-color:#ffffff35}.timeline{margin-top:18px;padding:18px}.steps{display:flex;gap:8px;flex-wrap:wrap}.step{flex:1;min-width:110px;border:1px solid var(--line);border-radius:12px;padding:10px;background:#ffffff06}.step.active{border-color:var(--cyan);background:#8ce7f015}.step small{display:block;color:#c3c1dd}.note{font-size:.82rem;color:#c3c1dd;margin-top:14px}@media(max-width:760px){.wrap{padding:12px}.layout{grid-template-columns:1fr}.scene{min-height:0}.detail{padding:16px}.timeline{padding:14px}.top .pill{font-size:.8rem}}
+</style></head><body><main class="wrap">
+<header class="top"><div><div class="eyebrow">PENCARIAN KODE: MODUL KAWASAN 3D</div><h1 class="title">SIMRS PROTOTYPE <span style="color:var(--pink)">·</span> Kawasan Rumah Sakit</h1><div class="muted">Konsep arsitektur orisinal untuk visualisasi alur pelayanan.</div></div><span class="pill">V16.5.15 · Integrasi status lokal</span></header>
+<section class="layout"><div class="glass scene" aria-label="Peta konseptual kawasan rumah sakit 3D"><svg viewBox="0 0 760 560" role="img" aria-label="Model kawasan rumah sakit isometrik. Pilih gedung untuk melihat fungsi.">
+<defs><linearGradient id="floor" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#36505b"/><stop offset="1" stop-color="#20283f"/></linearGradient></defs>
+<path class="ground" d="M380 35 715 210 380 390 45 210Z" fill="url(#floor)"/><path class="road" d="M80 320 260 415 420 330 650 450"/><path class="roadline" d="M80 320 260 415 420 330 650 450"/>
+<g class="trees"><circle cx="102" cy="208" r="12"/><circle cx="128" cy="222" r="10"/><circle cx="603" cy="188" r="13"/><circle cx="625" cy="203" r="10"/><circle cx="498" cy="386" r="11"/><circle cx="520" cy="398" r="9"/><circle cx="197" cy="345" r="12"/></g>
+<!-- Gedung konseptual dibentuk sendiri; geometri bukan salinan denah rumah sakit tertentu. -->
+<g class="building" tabindex="0" role="button" aria-label="Gedung Rawat Jalan" data-id="rj"><path class="side" d="M105 190 170 155 170 235 105 270Z"/><path class="front" d="M170 155 255 200 255 280 170 235Z"/><path class="roof" d="M105 190 190 235 255 200 170 155Z"/><path class="window" d="M183 181 198 189 198 207 183 199ZM207 194 222 202 222 220 207 212ZM183 211 198 219 198 237 183 229ZM207 224 222 232 222 250 207 242Z"/><text class="label" x="180" y="142" text-anchor="middle">RAWAT JALAN</text></g>
+<g class="building" tabindex="0" role="button" aria-label="Gedung Rawat Inap" data-id="ri"><path class="side" d="M300 112 385 67 385 185 300 230Z"/><path class="front" d="M385 67 475 113 475 231 385 185Z"/><path class="roof" d="M300 112 390 158 475 113 385 67Z"/><path class="window" d="M400 94 416 102 416 121 400 113ZM427 108 443 116 443 135 427 127ZM400 126 416 134 416 153 400 145ZM427 140 443 148 443 167 427 159ZM400 158 416 166 416 176 400 168Z"/><text class="label" x="390" y="52" text-anchor="middle">RAWAT INAP</text></g>
+<g class="building active" tabindex="0" role="button" aria-label="Gedung IGD" data-id="igd"><path class="side" d="M485 250 550 215 550 285 485 320Z"/><path class="front" d="M550 215 630 256 630 326 550 285Z"/><path class="roof" d="M485 250 565 291 630 256 550 215Z"/><path fill="#f28d9a" d="M566 245 578 245 578 257 590 257 590 269 578 269 578 281 566 281 566 269 554 269 554 257 566 257Z"/><text class="label" x="562" y="203" text-anchor="middle">IGD</text></g>
+<g class="building" tabindex="0" role="button" aria-label="Gedung Diagnostik Terpadu" data-id="diag"><path class="side" d="M245 285 310 250 310 310 245 345Z"/><path class="front" d="M310 250 390 291 390 351 310 310Z"/><path class="roof" d="M245 285 325 326 390 291 310 250Z"/><path class="window" d="M324 272 339 280 339 298 324 290ZM348 284 363 292 363 310 348 302ZM324 298 339 306 339 324 324 316Z"/><text class="label" x="321" y="239" text-anchor="middle">DIAGNOSTIK</text></g>
+<g><path d="M95 390 145 417 145 434 95 407Z" fill="#8ce7f0"/><text class="label" x="112" y="450" text-anchor="middle">PINTU MASUK</text><path d="M610 380 675 414 675 429 610 395Z" fill="#f4a1d2"/><text class="label" x="641" y="449" text-anchor="middle">AMBULANS</text></g>
+</svg></div>
+<aside class="glass detail" aria-live="polite"><div class="icon" id="unit-icon">🚑</div><div class="eyebrow" id="unit-type">UNIT PELAYANAN</div><h2 id="unit-name">Instalasi Gawat Darurat</h2><p class="muted" id="unit-desc">Akses darurat tersendiri untuk kedatangan pasien gawat darurat dan ambulans.</p><div class="stats"><div class="stat"><span class="muted">Status model</span><b>Konsep</b></div><div class="stat"><span class="muted">Integrasi data</span><b id="sync-state">Belum aktif</b></div></div><div class="actions"><button class="btn primary" id="journey-btn">Lihat perjalanan pasien</button><button class="btn" id="refresh-btn">Perbarui data</button><button class="btn" id="reset-btn">Reset tampilan</button></div><p class="note" id="sync-note">Status integrasi: memeriksa penyimpanan lokal SIMRS. Modul ini hanya membaca data dan tidak menulis perubahan.</p></aside></section>
+<section class="glass timeline"><div class="eyebrow">PERJALANAN PASIEN · BACA SAJA</div><h2 style="margin:.3rem 0 1rem">Perjalanan layanan</h2><label for="visit-select" class="muted">Pilih kunjungan demo</label><select id="visit-select" class="btn" style="display:block;max-width:100%;margin:8px 0 14px"><option value="">Tidak ada kunjungan terbaca</option></select><div class="steps" id="steps"><div class="step active" data-stage="registration"><b>1. Pendaftaran</b><small>Belum ada status</small></div><div class="step" data-stage="clinic"><b>2. Poli / IGD</b><small>Belum ada status</small></div><div class="step" data-stage="support"><b>3. Penunjang</b><small>Jika ada permintaan</small></div><div class="step" data-stage="pharmacy"><b>4. Farmasi</b><small>Jika ada resep</small></div><div class="step" data-stage="complete"><b>5. Selesai</b><small>Menunggu status</small></div></div><p class="note" id="journey-note">Data kunjungan hanya dibaca dari localStorage SIMRS pada origin/browser yang sama. Data contoh tidak mewakili pelayanan nyata.</p></section>
+</main><script>
+/* PENCARIAN KODE: KAWASAN_3D_UNIT_DATA — katalog konseptual orisinal, bukan denah rumah sakit nyata. */
+const units={
+  rj:{icon:'🩺',type:'GEDUNG PELAYANAN',name:'Gedung Rawat Jalan',desc:'Area konseptual untuk pendaftaran rawat jalan, poli reguler, poli eksekutif, dan konsultasi.'},
+  ri:{icon:'🛏️',type:'GEDUNG PERAWATAN',name:'Gedung Rawat Inap',desc:'Area konseptual untuk admisi, ruang perawatan, pemantauan pasien, dan koordinasi antarshift.'},
+  igd:{icon:'🚑',type:'UNIT PELAYANAN DARURAT',name:'Instalasi Gawat Darurat',desc:'Akses darurat tersendiri untuk kedatangan pasien gawat darurat dan ambulans.'},
+  diag:{icon:'🧪',type:'GEDUNG PENUNJANG',name:'Diagnostik Terpadu',desc:'Area konseptual laboratorium dan radiologi yang terhubung dengan alur kunjungan.'}
+};
+/* PENCARIAN KODE: KAWASAN_3D_SELECT — seleksi gedung hanya mengubah presentasi. */
+const nodes=[...document.querySelectorAll('.building')];
+function selectUnit(id){const u=units[id];if(!u)return;nodes.forEach(n=>n.classList.toggle('active',n.dataset.id===id));document.getElementById('unit-icon').textContent=u.icon;document.getElementById('unit-type').textContent=u.type;document.getElementById('unit-name').textContent=u.name;document.getElementById('unit-desc').textContent=u.desc;}
+nodes.forEach(n=>{n.addEventListener('click',()=>selectUnit(n.dataset.id));n.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();selectUnit(n.dataset.id)}})});
+
+/* PENCARIAN KODE: SIMRS_READ_ONLY_ADAPTER — membaca snapshot simrs_db_v1; tidak pernah menulis ke penyimpanan. */
+const DB_KEY='simrs_db_v1';
+let visitsCache=[];
+const $=id=>document.getElementById(id);
+function safeDate(value){if(!value)return 0;const n=Date.parse(value);return Number.isFinite(n)?n:0;}
+function readSnapshot(){
+  try{
+    const raw=localStorage.getItem(DB_KEY);
+    if(!raw)return {ok:false,reason:'Database demo belum ditemukan pada browser/origin ini.',data:null};
+    const data=JSON.parse(raw);
+    if(!data||typeof data!=='object'||!Array.isArray(data.visits))return {ok:false,reason:'Format data SIMRS tidak dikenali; data tidak diubah.',data:null};
+    return {ok:true,reason:'Terhubung ke snapshot lokal (read-only).',data:data};
+  }catch(err){return {ok:false,reason:'Penyimpanan tidak dapat dibaca. Periksa izin browser atau data demo.',data:null};}
+}
+function labelStatus(status){
+  const labels={terjadwal:'Terjadwal',checked_in:'Check-in',menunggu_screening:'Menunggu screening',screening:'Screening',menunggu_poli:'Menunggu poli',menunggu_dokter:'Menunggu dokter',dipanggil:'Dipanggil',diperiksa:'Sedang diperiksa',menunggu_review:'Menunggu review dokter',menunggu_penunjang:'Menunggu penunjang',menunggu_lab:'Menunggu hasil laboratorium',menunggu_farmasi:'Menunggu farmasi',obat_siap:'Obat siap diambil',menunggu_bayar:'Menunggu pembayaran',selesai:'Selesai',dibatalkan:'Dibatalkan',batal:'Dibatalkan',tidak_hadir:'Tidak hadir',menunggu:'Menunggu',diterima:'Diterima',diproses:'Diproses',siap_diambil:'Siap diambil',diambil:'Sudah diambil'};
+  return labels[status]||status||'Belum tercatat';
+}
+/* PENCARIAN KODE: STAGE6_STATUS_MAPPING — status perjalanan diturunkan dari status kunjungan dan permintaan yang benar-benar tersimpan. */
+function statusIndex(v,hasRx,hasSupport){
+  const s=String(v.status||'').toLowerCase();
+  if(['selesai','complete','completed'].includes(s))return 4;
+  if(['menunggu_farmasi','obat_siap'].includes(s)||hasRx&&['menunggu_farmasi','obat_siap'].includes(s))return 3;
+  if(['menunggu_lab','menunggu_penunjang'].includes(s)||hasSupport)return 2;
+  if(['checked_in','menunggu_screening','screening','menunggu_dokter','menunggu_poli','dipanggil','diperiksa','menunggu_review','menunggu_bayar'].includes(s))return 1;
+  return 0;
+}
+function relatedCareRequests(data,visitId){
+  return (Array.isArray(data.careRequests)?data.careRequests:[]).filter(r=>r&&r.sourceVisitId===visitId&&r.status!=='ditolak');
+}
+function renderJourney(){
+  const chosen=visitsCache.find(v=>String(v.id)===String($('visit-select').value))||null;
+  const allSteps=[...document.querySelectorAll('[data-stage]')];
+  if(!chosen){allSteps.forEach((el,i)=>{el.classList.toggle('active',i===0);el.querySelector('small').textContent='Belum ada kunjungan dipilih';});$('journey-note').textContent='Pilih kunjungan untuk membaca status. Modul ini tidak membuat atau mengubah data pasien.';return;}
+  const snap=readSnapshot(),data=snap.data||{};
+  const prescriptions=Array.isArray(data.prescriptions)?data.prescriptions:[];
+  const rx=prescriptions.filter(r=>r&&(r.visitId===chosen.id||r.id===chosen.resepId));
+  const requests=relatedCareRequests(data,chosen.id);
+  const lab=!!(chosen.labRequest&&chosen.labRequest.status&&chosen.labRequest.status!=='ditolak')||requests.some(r=>r.destination==='lab');
+  const rad=!!(chosen.radiologyRequest&&chosen.radiologyRequest.status&&chosen.radiologyRequest.status!=='ditolak')||requests.some(r=>r.destination==='radiologi');
+  const supportCount=Number(lab)+Number(rad);
+  const active=statusIndex(chosen,rx.length>0,supportCount>0);
+  const steps=[
+    {label:'Kunjungan tercatat',detail:chosen.createdAt?'Dibuat '+new Date(chosen.createdAt).toLocaleString('id-ID'):'Data pendaftaran tersedia'},
+    {label:labelStatus(chosen.status),detail:chosen.poliId?'Poli: '+String(chosen.poliId):(chosen.unit||'Unit belum tercatat')},
+    {label:supportCount?'Permintaan penunjang tercatat':'Tidak ada permintaan terbaca',detail:(lab?'Laboratorium':'')+(lab&&rad?' · ':'')+(rad?'Radiologi':'')||'Tidak ada permintaan lab/radiologi yang terhubung'},
+    {label:rx.length?'Resep terhubung':'Belum ada resep terhubung',detail:rx.length?rx.map(r=>labelStatus(r.status)).join(', '):'Resep tidak diasumsikan ada'},
+    {label:active===4?'Kunjungan selesai':'Belum selesai',detail:active===4?'Status kunjungan tercatat selesai':'Mengikuti status kunjungan yang tersimpan'}
+  ];
+  allSteps.forEach((el,i)=>{el.classList.toggle('active',i===active);el.querySelector('b').textContent=(i+1)+'. '+['Pendaftaran','Poli / IGD','Penunjang','Farmasi','Selesai'][i];el.querySelector('small').textContent=steps[i].label+' — '+steps[i].detail;});
+  /* Hindari menampilkan nama pasien pada modul kawasan; cukup identitas kunjungan demo. */
+  $('journey-note').textContent='Kunjungan '+String(chosen.noAntrian||chosen.id)+' · Status: '+labelStatus(chosen.status)+'. Data dibaca lokal; belum tersinkron antarperangkat.';
+  const unit=String(chosen.unit||'').toLowerCase();selectUnit(unit==='igd'?'igd':unit.includes('inap')?'ri':unit==='rawat-jalan'?'rj':'rj');
+}
+function refreshSnapshot(){
+  const result=readSnapshot(),select=$('visit-select'),previous=select.value;visitsCache=[];
+  if(!result.ok){select.innerHTML='<option value="">Tidak ada kunjungan terbaca</option>';$('sync-state').textContent='Tidak tersedia';$('sync-note').textContent='Status integrasi: '+result.reason;renderJourney();return;}
+  const data=result.data;
+  visitsCache=data.visits.filter(v=>v&&typeof v==='object'&&v.id!==undefined&&v.id!==null).slice().sort((a,b)=>safeDate(b.updatedAt||b.createdAt)-safeDate(a.updatedAt||a.createdAt));
+  select.replaceChildren();
+  if(!visitsCache.length){const o=document.createElement('option');o.value='';o.textContent='Belum ada kunjungan';select.appendChild(o);}
+  else visitsCache.forEach(v=>{const o=document.createElement('option');o.value=String(v.id);o.textContent=String(v.noAntrian||v.id)+' · '+labelStatus(v.status);select.appendChild(o);});
+  if(visitsCache.some(v=>String(v.id)===String(previous)))select.value=previous;
+  $('sync-state').textContent='Terhubung lokal';$('sync-note').textContent='Status integrasi: '+result.reason+' Data hanya dibaca; tidak ada perubahan yang disimpan.';
+  renderJourney();
+}
+$('visit-select').addEventListener('change',renderJourney);
+$('refresh-btn').addEventListener('click',refreshSnapshot);
+$('journey-btn').addEventListener('click',()=>{refreshSnapshot();$('steps').scrollIntoView({behavior:'smooth',block:'center'});});
+$('reset-btn').addEventListener('click',()=>{selectUnit('igd');$('visit-select').selectedIndex=0;renderJourney();});
+/* PENCARIAN KODE: STAGE6_LIFECYCLE — refresh hanya saat halaman aktif atau database berubah. */
+window.addEventListener('focus',refreshSnapshot);
+window.addEventListener('pageshow',refreshSnapshot);
+window.addEventListener('storage',e=>{if(e.key===DB_KEY||e.key===null)refreshSnapshot();});
+refreshSnapshot();
+</script></body></html>

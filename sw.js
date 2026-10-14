@@ -5,11 +5,12 @@
 //
 // PENTING: SW_VERSION harus dinaikkan setiap kali salah satu modules/*.js, style.css, atau qrcode.lib.js berubah,
 // supaya browser tahu ada versi baru dan mengambil file segar (bukan memakai cache lama selamanya).
-const SW_VERSION = 'v16.5.13';
+const SW_VERSION = 'v16.5.15';
 const CACHE_NAME = 'simrs-prototype-' + SW_VERSION;
 const APP_SHELL = [
   './',
   './index.html',
+  './kawasan-3d.html',
   './theme-system.js?v=16.5.12',
   './style.css?v=16.5.12',
   './modules/rawat-inap/core.js?v=16.5.12',
