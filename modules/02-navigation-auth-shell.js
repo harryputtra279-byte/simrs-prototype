@@ -258,6 +258,8 @@ function renderShell(route){
          '<h1 id="page-title"></h1>'+
          '<div class="topbar-right">'+
            '<button class="btn btn-outline btn-sm hidden" id="btn-install">⭳ Pasang</button>'+
+           /* TAUTAN KAWASAN 3D: selalu tersedia setelah login, tidak masuk ke RBAC alur klinis. */
+           '<a class="btn btn-outline btn-sm" href="kawasan-3d.html" title="Buka visualisasi kawasan rumah sakit">🏥 Kawasan 3D</a>'+
            (u.role!=='pasien' ? '<button class="avatar-btn" id="btn-global-search" title="Cari pasien" style="background:var(--glass-bg);border:1px solid var(--glass-border);color:var(--ink);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)">🔍</button>' : '')+
            '<button class="avatar-btn ops-notif-btn" id="btn-notifications" title="Notifikasi">🔔<span id="notif-count" class="'+(visibleNotifications.filter(function(n){return !n.read;}).length?'':'hidden')+'">'+visibleNotifications.filter(function(n){return !n.read;}).length+'</span></button>'+
            '<button class="avatar-btn" id="btn-account" title="Akun">'+esc(initial)+'</button>'+
@@ -439,6 +441,9 @@ function renderLogin(){
         '</form>'+
         '<div class="login-divider">atau gunakan akun demo</div>'+
         '<div class="chip-row">'+chipsForDemo()+'</div>'+
+        /* TAUTAN KAWASAN 3D: akses langsung dari layar login, tanpa mengubah autentikasi. */
+        '<div class="login-divider">Jelajahi visualisasi kawasan rumah sakit</div>'+
+        '<a class="btn btn-outline btn-block" href="kawasan-3d.html">🏥 Buka Kawasan 3D</a>'+
       '</div>'+
     '</div></div>';
 
