@@ -1108,6 +1108,23 @@ button:hover,.btn:hover,[role="button"]:hover,.admin-folder-item:hover,.admin-me
   <div class="bubble bubble-5"></div>
 </div>
 <div id="offline-banner" class="offline-banner hidden">Anda sedang offline — data tetap tersimpan di perangkat ini dan akan terlihat kembali saat koneksi pulih.</div>
+<!-- PENCARIAN KODE: KAWASAN 3D LATAR GLOBAL — bentuk konseptual, dekoratif, non-interaktif -->
+<div id="simrs-campus-backdrop" aria-hidden="true">
+<svg viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+ <defs><linearGradient id="campusGlass" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#d8f4ff"/><stop offset="1" stop-color="#a99aff"/></linearGradient></defs>
+ <path class="campus-ground" d="M720 95 1380 430 720 810 60 430Z"/>
+ <path class="campus-road" d="M90 560 400 390 700 545 1040 350 1350 500 M710 795 710 545 710 260"/>
+ <!-- Gedung utama -->
+ <g transform="translate(500 220)"><path class="campus-side" d="M0 90 170 0 170 180 0 270Z"/><path class="campus-front" d="M170 0 340 90 340 270 170 180Z"/><path class="campus-roof" d="M0 90 170 0 340 90 170 180Z"/><path fill="url(#campusGlass)" d="M145 55 195 28 240 52 190 80Z"/><path class="campus-window" d="M30 115 65 96 65 125 30 145ZM85 85 120 66 120 96 85 115ZM30 165 65 145 65 175 30 195ZM85 135 120 115 120 145 85 165Z"/><path class="campus-window" d="M205 40 235 56 235 85 205 69ZM260 70 290 86 290 115 260 99ZM205 95 235 111 235 140 205 124ZM260 125 290 141 290 170 260 154Z"/></g>
+ <!-- Gedung rawat inap -->
+ <g transform="translate(850 330)"><path class="campus-side" d="M0 45 95 0 95 160 0 205Z"/><path class="campus-front" d="M95 0 190 45 190 205 95 160Z"/><path class="campus-roof" d="M0 45 95 0 190 45 95 90Z"/><path class="campus-window" d="M20 58 42 47 42 70 20 81ZM20 100 42 89 42 112 20 123ZM20 142 42 131 42 154 20 165ZM112 31 133 41 133 64 112 54ZM150 49 171 59 171 82 150 72ZM112 73 133 83 133 106 112 96ZM150 91 171 101 171 124 150 114ZM112 115 133 125 133 148 112 138Z"/></g>
+ <!-- Gedung IGD -->
+ <g transform="translate(300 420)"><path class="campus-side" d="M0 30 75 0 75 105 0 135Z"/><path class="campus-front" d="M75 0 150 30 150 135 75 105Z"/><path class="campus-roof" d="M0 30 75 0 150 30 75 60Z"/><path fill="#fff" d="M65 19h20v24H65z M58 26h34v10H58z"/><path class="campus-window" d="M16 48 36 40 36 62 16 70ZM16 84 36 76 36 98 16 106ZM91 29 112 37 112 59 91 51ZM122 41 140 48 140 70 122 63Z"/></g>
+ <!-- Klinik, penunjang dan pepohonan -->
+ <g transform="translate(1010 520)"><path class="campus-side" d="M0 25 65 0 65 95 0 120Z"/><path class="campus-front" d="M65 0 130 25 130 120 65 95Z"/><path class="campus-roof" d="M0 25 65 0 130 25 65 50Z"/><path class="campus-window" d="M15 43 35 35 35 55 15 63ZM15 75 35 67 35 87 15 95ZM80 19 100 27 100 47 80 39ZM80 51 100 59 100 79 80 71Z"/></g>
+ <g class="campus-tree"><path d="M180 510l22-52 22 52z M196 535h12v28h-12z M1170 290l24-58 24 58z M1188 315h12v28h-12z M420 650l22-52 22 52z M436 675h12v28h-12z M1240 640l22-52 22 52z M1256 665h12v28h-12z"/></g>
+</svg></div>
+
 <div id="app"></div>
 <div id="modal-root"></div>
 <div id="toast-root" class="toast-container"></div>
