@@ -1,21 +1,3 @@
-/* PENCARIAN KODE: STAGE7_ACCESSIBILITY_PERFORMANCE_CONTRACTS
- * Kontrak statis untuk fallback visual, aksesibilitas dasar, dan integrasi read-only.
- * Tes ini bukan pengganti pengujian browser atau perangkat nyata.
- */
-'use strict';
-const fs=require('fs'),path=require('path');
-const root=path.resolve(__dirname,'..');
-const html=fs.readFileSync(path.join(root,'kawasan-3d.html'),'utf8');
-const checks=[
- ['menghormati preferensi reduced-motion',html.includes('prefers-reduced-motion:reduce')],
- ['menyediakan fallback bila backdrop-filter tidak didukung',html.includes('not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px)))')],
- ['mengurangi efek pada perangkat low-resource/saveData',html.includes('low-resource')&&html.includes('navigator.connection')&&html.includes('saveData')],
- ['memiliki indikator fokus keyboard yang terlihat',html.includes('button:focus-visible,select:focus-visible')],
- ['mendukung forced-colors',html.includes('forced-colors:active')],
- ['unit SVG memiliki label aksesibel dan kontrol keyboard',html.includes('role="button"')&&html.includes("e.key==='Enter'||e.key===' '" )],
- ['status kawasan tetap read-only',html.includes("const DB_KEY='simrs_db_v1'")&&!/localStorage\.(setItem|removeItem|clear)\s*\(/.test(html)],
- ['tidak menggunakan dependensi eksternal pada halaman kawasan',!/<script[^>]+src=["']https?:\/\//i.test(html)&&!/<link[^>]+href=["']https?:\/\//i.test(html)],
- ['penanda pencarian kode untuk modul tahap 7',html.includes('PENCARIAN KODE: STAGE6_LIFECYCLE')&&html.includes('PENCARIAN KODE: SIMRS_READ_ONLY_ADAPTER')]
-];
-let failed=0;for(const [name,ok] of checks){console.log(`${ok?'PASS':'FAIL'} ${name}`);if(!ok)failed++;}
-if(failed)process.exit(1);console.log(`LULUS ${checks.length}/${checks.length} kontrak statis Tahap 7.`);
+/* PENCARIAN KODE: TEST_INTEGRATED_ACCESSIBILITY_CONTRACTS */
+const fs=require('fs'),path=require('path'),root=path.resolve(__dirname,'..');const css=fs.readFileSync(path.join(root,'style.css'),'utf8'),nav=fs.readFileSync(path.join(root,'modules/02-navigation-auth-shell.js'),'utf8');
+const checks=[['reduced motion',css.includes('prefers-reduced-motion:reduce')],['forced colors',css.includes('forced-colors:active')],['focus keyboard terlihat',css.includes('.campus-unit:focus-visible')],['layout mobile tersedia',css.includes('@media(max-width:600px)')],['dekorasi tidak mengambil pointer',css.includes('#simrs-campus-backdrop{position:fixed;inset:0;z-index:0;pointer-events:none')],['login form tetap accessible',nav.includes('aria-label="Masuk ke SIMRS PROTOTYPE"')],['unit dashboard memakai button native',nav.includes('<button type="button" class="campus-unit')]];let fail=0;for(const[n,ok]of checks){console.log(`${ok?'PASS':'FAIL'} ${n}`);if(!ok)fail++}if(fail)process.exit(1);console.log(`LULUS ${checks.length}/${checks.length}`);

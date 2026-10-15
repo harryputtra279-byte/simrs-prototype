@@ -1,14 +1,13 @@
-/* PENCARIAN KODE: TEST_KAWASAN_3D_SMOKE — pemeriksaan kontrak statis sederhana. */
-const fs = require('fs');
-const html = fs.readFileSync(require('path').join(__dirname, '..', 'kawasan-3d.html'), 'utf8');
-const checks = [
-  ['judul modul', html.includes('SIMRS PROTOTYPE')],
-  ['empat unit kawasan', ['data-id="rj"','data-id="ri"','data-id="igd"','data-id="diag"'].every(x=>html.includes(x))],
-  ['interaksi keyboard', html.includes("e.key==='Enter'||e.key===' '" )],
-  ['penanda pencarian kode', html.includes('PENCARIAN KODE: KAWASAN_3D_UNIT_DATA') && html.includes('PENCARIAN KODE: KAWASAN_3D_SELECT')],
-  ['status integrasi jujur', html.includes('Terhubung lokal') && html.includes('tidak menulis perubahan')],
-  ['timeline pasien', html.includes('Perjalanan layanan')],
-];
-let failed = false;
-for (const [name, ok] of checks) { console.log(`${ok?'PASS':'FAIL'} ${name}`); if (!ok) failed=true; }
-if (failed) process.exit(1);
+/* PENCARIAN KODE: TEST_INTEGRATED_CAMPUS_SMOKE — V16.5.20 */
+const fs=require('fs'),path=require('path'),root=path.resolve(__dirname,'..');
+const nav=fs.readFileSync(path.join(root,'modules/02-navigation-auth-shell.js'),'utf8');
+const css=fs.readFileSync(path.join(root,'style.css'),'utf8');
+const checks=[
+ ['login memiliki scene kawasan terintegrasi',nav.includes('simrs-login-scene')&&nav.includes('campus-isometric')],
+ ['scene punya tiga bangunan layanan',nav.includes('campus-main-building')&&nav.includes('campus-clinic-building')&&nav.includes('campus-emergency-building')],
+ ['dashboard memiliki hub unit',nav.includes('simrs-campus-hub')&&nav.includes('campus-hub-grid')],
+ ['akses unit tetap memakai data-nav',nav.includes('class="campus-unit campus-unit-main" data-nav="dashboard"')],
+ ['tema visual memakai token aktif',css.includes('var(--accent)')&&css.includes('var(--accent-2)')],
+ ['mobile layout dan reduced motion tersedia',css.includes('@media(max-width:600px)')&&css.includes('prefers-reduced-motion:reduce')],
+ ['tidak ada tautan ke halaman 3D mandiri',!nav.includes('href="kawasan-3d.html"')&&!nav.includes('Buka Kawasan 3D')]
+];let fail=0;for(const [n,ok] of checks){console.log(`${ok?'PASS':'FAIL'} ${n}`);if(!ok)fail++}if(fail)process.exit(1);console.log(`LULUS ${checks.length}/${checks.length}`);
