@@ -39,13 +39,13 @@ body{
    ===================================================================== */
 #simrs-campus-backdrop{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;opacity:.18;}
 #simrs-campus-backdrop svg{width:100%;height:100%;display:block;}
-#simrs-campus-backdrop .campus-ground{fill:#a9c8db;fill-opacity:.35;stroke:#7c9cb8;stroke-opacity:.38;stroke-width:2}
-#simrs-campus-backdrop .campus-road{fill:none;stroke:#8ba3b8;stroke-width:30;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:.36}
-#simrs-campus-backdrop .campus-roof{fill:#a99aff;stroke:#fff;stroke-opacity:.65;stroke-width:1.5}
-#simrs-campus-backdrop .campus-front{fill:#6e91b5;stroke:#fff;stroke-opacity:.65;stroke-width:1.5}
-#simrs-campus-backdrop .campus-side{fill:#496a91;stroke:#fff;stroke-opacity:.45;stroke-width:1.5}
-#simrs-campus-backdrop .campus-window{fill:#c7f5f3;fill-opacity:.9}
-#simrs-campus-backdrop .campus-tree{fill:#68b99a;stroke:#e1fff2;stroke-opacity:.55}
+#simrs-campus-backdrop .campus-ground{fill:var(--accent);fill-opacity:.18;stroke:var(--accent);stroke-opacity:.42;stroke-width:2}
+#simrs-campus-backdrop .campus-road{fill:none;stroke:var(--accent-2);stroke-width:30;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:.22}
+#simrs-campus-backdrop .campus-roof{fill:var(--accent-2);fill-opacity:.78;stroke:#fff;stroke-opacity:.8;stroke-width:1.5}
+#simrs-campus-backdrop .campus-front{fill:var(--accent);fill-opacity:.72;stroke:#fff;stroke-opacity:.72;stroke-width:1.5}
+#simrs-campus-backdrop .campus-side{fill:var(--accent-2);fill-opacity:.58;stroke:#fff;stroke-opacity:.55;stroke-width:1.5}
+#simrs-campus-backdrop .campus-window{fill:var(--paper);fill-opacity:.95}
+#simrs-campus-backdrop .campus-tree{fill:var(--accent-2);fill-opacity:.62;stroke:#fff;stroke-opacity:.55}
 .login-wrap{position:relative;isolation:isolate;z-index:1;}
 #app{position:relative;z-index:1}
 body:has(.login-wrap) #simrs-campus-backdrop{opacity:.48}
@@ -1255,3 +1255,74 @@ html[data-theme-kind="nature"][data-theme-id="sakura-garden"]::before,html[data-
 .theme-swatch{display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative}
 .theme-swatch>span{font-size:28px;filter:drop-shadow(0 2px 3px rgba(0,0,0,.2));}
 .theme-swatch.nature-swatch{background-image:linear-gradient(135deg,var(--swatch-a),var(--swatch-b)),radial-gradient(ellipse at 20% 80%,rgba(255,255,255,.7),transparent 40%)!important}
+
+
+/* =====================================================================
+   PENCARIAN KODE: SIMRS INTEGRATED 3D GLASS SYSTEM — V16.5.20
+   Lapisan visual lintas halaman. Tidak menyimpan state bisnis dan tidak
+   menggantikan kontrol akses/menu; semua aksi tetap memakai data-nav.
+   Warna mengikuti token dari theme-system.js agar tema aktif konsisten.
+   ===================================================================== */
+:root{
+  --simrs-depth-shadow:0 24px 60px rgba(36,27,78,.16),0 5px 16px rgba(36,27,78,.08),inset 0 1px 0 rgba(255,255,255,.82);
+  --simrs-edge:color-mix(in srgb,var(--accent) 45%,rgba(255,255,255,.8));
+  --simrs-surface:linear-gradient(145deg,rgba(255,255,255,.82),color-mix(in srgb,var(--paper) 75%,var(--accent) 8%));
+}
+#app{min-height:100%;}
+.login-wrap.simrs-login-scene{width:min(1440px,100%);min-height:100vh;margin:auto;padding:clamp(16px,3.6vw,52px);display:grid;grid-template-columns:minmax(0,1.18fr) minmax(320px,.82fr);align-items:center;gap:clamp(18px,3vw,44px);}
+.simrs-login-scene .login-campus{position:relative;min-width:0;min-height:610px;overflow:hidden;padding:clamp(20px,3vw,38px);border:1px solid var(--simrs-edge);border-radius:34px;background:radial-gradient(ellipse at 50% 50%,color-mix(in srgb,var(--accent) 17%,transparent),transparent 65%),linear-gradient(145deg,rgba(255,255,255,.64),rgba(255,255,255,.2));box-shadow:var(--simrs-depth-shadow);backdrop-filter:blur(22px) saturate(145%);-webkit-backdrop-filter:blur(22px) saturate(145%);isolation:isolate;}
+.simrs-login-scene .login-campus:before,.simrs-campus-hub:before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.36;background-image:linear-gradient(color-mix(in srgb,var(--accent) 13%,transparent) 1px,transparent 1px),linear-gradient(90deg,color-mix(in srgb,var(--accent) 13%,transparent) 1px,transparent 1px);background-size:34px 34px;mask-image:linear-gradient(145deg,#000,transparent 75%);z-index:-1;}
+.campus-scene-kicker,.campus-scene-footer{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:10px;letter-spacing:.16em;font-weight:850;color:var(--accent);}
+.campus-scene-title{display:flex;align-items:center;gap:12px;margin-top:22px;color:var(--ink);}
+.campus-scene-title strong{display:block;font-size:clamp(25px,3vw,42px);letter-spacing:-.06em;line-height:1.02;}
+.campus-scene-title span:not(.campus-pulse){display:block;font-size:10px;letter-spacing:.22em;color:var(--ink-soft);margin-top:6px;}
+.campus-pulse{width:13px;height:13px;border-radius:50%;background:var(--accent-2);box-shadow:0 0 0 7px color-mix(in srgb,var(--accent-2) 16%,transparent),0 0 24px var(--accent-2);}
+.campus-isometric{position:relative;height:clamp(330px,38vw,440px);margin:6px -12px 0;perspective:1000px;isolation:isolate;}
+.campus-platform{position:absolute;width:76%;height:57%;left:12%;top:25%;transform:rotateX(58deg) rotateZ(-35deg);border-radius:30px;background:linear-gradient(135deg,color-mix(in srgb,var(--accent) 18%,white),color-mix(in srgb,var(--accent-2) 18%,white));border:1px solid rgba(255,255,255,.88);box-shadow:0 34px 40px rgba(38,27,75,.16),inset 0 2px 0 rgba(255,255,255,.9);}
+.campus-building{position:absolute;transform-style:preserve-3d;filter:drop-shadow(0 20px 14px rgba(38,27,75,.16));}
+.campus-building .building-front,.campus-building .building-side,.campus-building .building-roof{position:absolute;border:1px solid rgba(255,255,255,.7);}
+.campus-building .building-front{background:linear-gradient(145deg,color-mix(in srgb,var(--accent) 74%,white),var(--accent));}
+.campus-building .building-side{background:linear-gradient(145deg,var(--accent-2),color-mix(in srgb,var(--accent-2) 48%,#26324b));}
+.campus-building .building-roof{background:linear-gradient(135deg,color-mix(in srgb,var(--accent-2) 66%,white),var(--accent-2));display:flex;align-items:center;justify-content:center;color:white;font-weight:900;text-shadow:0 2px 8px #0003;}
+.campus-main-building{width:164px;height:220px;left:35%;top:14%;}
+.campus-main-building .building-front{left:0;top:42px;width:112px;height:178px;clip-path:polygon(0 0,100% 0,100% 100%,0 100%);border-radius:3px 3px 6px 6px;}
+.campus-main-building .building-side{left:112px;top:42px;width:52px;height:178px;clip-path:polygon(0 0,100% -20px,100% 100%,0 100%);}
+.campus-main-building .building-roof{left:-8px;top:0;width:180px;height:54px;clip-path:polygon(0 65%,35% 0,100% 0,68% 100%);font-size:24px;}
+.campus-clinic-building{width:114px;height:154px;left:7%;top:40%;transform:scale(.82);}
+.campus-clinic-building .building-front{left:0;top:29px;width:82px;height:125px;}
+.campus-clinic-building .building-side{left:82px;top:29px;width:34px;height:125px;}
+.campus-clinic-building .building-roof{left:-5px;top:0;width:126px;height:37px;clip-path:polygon(0 55%,35% 0,100% 0,68% 100%);}
+.campus-emergency-building{width:114px;height:140px;right:7%;top:48%;transform:scale(.8);}
+.campus-emergency-building .building-front{left:0;top:28px;width:80px;height:112px;}
+.campus-emergency-building .building-side{left:80px;top:28px;width:34px;height:112px;}
+.campus-emergency-building .building-roof{left:-5px;top:0;width:124px;height:36px;clip-path:polygon(0 55%,35% 0,100% 0,68% 100%);}
+.building-sign{font-size:8px;font-weight:900;letter-spacing:.13em;color:white;text-align:center;margin:12px 3px 8px;text-shadow:0 1px 3px #0004;}
+.building-windows{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;padding:0 10px;}
+.building-windows i{height:13px;border-radius:3px;background:linear-gradient(145deg,#f5ffff,color-mix(in srgb,var(--accent-2) 28%,white));border:1px solid rgba(255,255,255,.8);box-shadow:inset 0 1px 2px #fff,0 2px 3px #27334a20;}
+.campus-main-building .building-windows i{height:17px;}
+.building-entry{width:22px;height:34px;margin:10px auto 0;border-radius:12px 12px 0 0;background:linear-gradient(90deg,#e8f8ff,#fff);box-shadow:inset 0 0 0 2px #ffffff9c;}
+.campus-road-line{position:absolute;left:23%;bottom:9%;width:58%;height:20px;border-top:3px dashed color-mix(in srgb,var(--accent) 60%,white);transform:rotate(-25deg);opacity:.75;}
+.campus-tree{position:absolute;width:22px;height:26px;background:linear-gradient(145deg,#d5fff0,var(--accent-2));clip-path:polygon(50% 0,100% 65%,68% 65%,68% 100%,32% 100%,32% 65%,0 65%);filter:drop-shadow(0 5px 4px #24304b24);}
+.tree-a{left:20%;bottom:17%;}.tree-b{right:20%;top:30%;transform:scale(.8)}.tree-c{left:62%;bottom:9%;transform:scale(.72)}
+.campus-float-card{position:absolute;z-index:4;display:flex;align-items:center;gap:10px;padding:11px 14px;border:1px solid rgba(255,255,255,.88);border-radius:15px;background:linear-gradient(145deg,rgba(255,255,255,.9),color-mix(in srgb,var(--paper) 72%,var(--accent) 10%));box-shadow:0 12px 28px rgba(39,28,77,.13),inset 0 1px 0 white;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);}
+.campus-float-card>span{display:grid;place-items:center;width:32px;height:32px;border-radius:10px;background:linear-gradient(145deg,var(--accent),var(--accent-2));color:white;font-size:18px;}
+.campus-float-card b,.campus-float-card small{display:block;white-space:nowrap}.campus-float-card b{font-size:11px;color:var(--ink)}.campus-float-card small{font-size:9px;color:var(--ink-soft);margin-top:2px}
+.campus-card-one{left:0;top:24%;}.campus-card-two{right:0;bottom:12%;}
+.campus-scene-footer{margin-top:0;font-size:9px;color:var(--ink-soft);letter-spacing:.1em;}.campus-live-dot{color:var(--accent-2);}
+.simrs-login-scene .login-panel{width:100%;max-width:510px;justify-self:center;border:1px solid var(--simrs-edge);border-radius:30px;background:linear-gradient(145deg,rgba(255,255,255,.88),color-mix(in srgb,var(--paper) 84%,var(--accent) 6%));box-shadow:var(--simrs-depth-shadow);backdrop-filter:blur(28px) saturate(155%);-webkit-backdrop-filter:blur(28px) saturate(155%);overflow:hidden;}
+.simrs-login-scene .login-body{padding:clamp(20px,3vw,32px);}
+.simrs-campus-hub{position:relative;isolation:isolate;overflow:hidden;margin:0 0 18px;padding:22px;border:1px solid var(--simrs-edge);border-radius:26px;background:radial-gradient(ellipse at 92% 5%,color-mix(in srgb,var(--accent-2) 17%,transparent),transparent 48%),linear-gradient(145deg,rgba(255,255,255,.72),color-mix(in srgb,var(--paper) 82%,var(--accent) 5%));box-shadow:var(--simrs-depth-shadow);backdrop-filter:blur(22px) saturate(145%);-webkit-backdrop-filter:blur(22px) saturate(145%);}
+.campus-hub-heading{position:relative;display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:18px;}.campus-hub-heading h2{font-size:clamp(18px,2.2vw,25px);margin:4px 0}.campus-hub-heading p{font-size:12px;color:var(--ink-soft);margin:0;max-width:680px;}.campus-hub-badge{display:flex;align-items:center;gap:7px;padding:7px 10px;border:1px solid var(--simrs-edge);border-radius:999px;font-size:9px;font-weight:850;letter-spacing:.1em;white-space:nowrap;background:rgba(255,255,255,.62);color:var(--ink-soft);}.campus-hub-badge i{width:7px;height:7px;border-radius:50%;background:#22c55e;box-shadow:0 0 0 4px #22c55e22;}
+.campus-hub-grid{position:relative;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;}
+.campus-unit{display:flex;align-items:center;gap:11px;min-width:0;text-align:left;padding:14px 12px;border:1px solid rgba(255,255,255,.94);border-radius:17px;background:linear-gradient(145deg,rgba(255,255,255,.86),color-mix(in srgb,var(--paper) 84%,var(--accent) 6%));box-shadow:0 8px 18px rgba(34,27,68,.08),inset 0 1px 0 white;color:var(--ink);cursor:pointer;transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease;}
+.campus-unit:hover{transform:translateY(-3px);border-color:var(--accent);box-shadow:0 14px 26px color-mix(in srgb,var(--accent) 18%,transparent),inset 0 1px 0 white;}.campus-unit:focus-visible{outline:3px solid var(--accent-2);outline-offset:3px;}
+.campus-unit-icon{flex:0 0 38px;width:38px;height:38px;display:grid;place-items:center;border-radius:12px;background:linear-gradient(145deg,var(--accent),var(--accent-2));color:white;font-size:18px;box-shadow:0 6px 12px color-mix(in srgb,var(--accent) 22%,transparent);}
+.campus-unit span:nth-child(2){min-width:0;flex:1}.campus-unit b,.campus-unit small{display:block}.campus-unit b{font-size:11px;line-height:1.3}.campus-unit small{font-size:9px;line-height:1.35;color:var(--ink-soft);margin-top:4px}.campus-unit em{font-style:normal;color:var(--accent);font-weight:900;}
+.campus-unit-main{background:linear-gradient(145deg,color-mix(in srgb,var(--accent) 14%,white),color-mix(in srgb,var(--accent-2) 13%,white));}
+/* Theme engine sets these tokens; fallback colors remain legible without color-mix. */
+@supports not (color:color-mix(in srgb,red,white)){.campus-unit{background:rgba(255,255,255,.9)}.simrs-campus-hub{background:rgba(255,255,255,.86)}.campus-building .building-front{background:var(--accent)}.campus-building .building-side{background:var(--accent-2)}}
+@media(max-width:980px){.login-wrap.simrs-login-scene{grid-template-columns:minmax(0,1fr);max-width:720px;gap:18px}.simrs-login-scene .login-campus{min-height:470px;padding:24px}.campus-isometric{height:330px;max-width:600px;margin:0 auto;width:100%}.simrs-login-scene .login-panel{max-width:100%}.campus-hub-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){.login-wrap.simrs-login-scene{padding:12px;gap:14px;align-items:start}.simrs-login-scene .login-campus{min-height:365px;padding:18px 14px;border-radius:23px}.campus-scene-kicker{font-size:8px;letter-spacing:.1em}.campus-scene-title{margin-top:15px}.campus-isometric{height:255px;margin:0 -8px}.campus-platform{width:82%;left:9%;top:25%;height:53%}.campus-main-building{transform:scale(.72);transform-origin:top left;left:34%;top:12%}.campus-clinic-building{transform:scale(.62);transform-origin:top left;left:0;top:41%}.campus-emergency-building{transform:scale(.61);transform-origin:top right;right:0;top:45%}.campus-float-card{padding:7px 9px;gap:6px;border-radius:11px}.campus-float-card>span{width:25px;height:25px;font-size:14px}.campus-float-card b{font-size:9px}.campus-float-card small{font-size:8px}.campus-card-one{top:22%;left:-4px}.campus-card-two{right:-4px;bottom:5%}.campus-scene-footer{font-size:7px}.simrs-login-scene .login-panel{border-radius:23px}.campus-hub-grid{grid-template-columns:1fr 1fr;gap:8px}.simrs-campus-hub{padding:15px;border-radius:20px}.campus-hub-heading{flex-direction:column}.campus-unit{padding:10px 8px;gap:8px}.campus-unit-icon{width:31px;height:31px;flex-basis:31px;font-size:15px}.campus-unit b{font-size:10px}.campus-unit small{font-size:8px}.campus-unit em{display:none}}
+@media(prefers-reduced-motion:reduce){.campus-unit{transition:none}.campus-unit:hover{transform:none}}
+@media(forced-colors:active){.campus-unit,.campus-float-card,.simrs-campus-hub,.login-campus{border:1px solid CanvasText;backdrop-filter:none}.campus-unit:focus-visible{outline:2px solid Highlight}}
+@media print{.login-campus,.simrs-campus-hub{box-shadow:none;backdrop-filter:none}}

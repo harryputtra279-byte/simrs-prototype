@@ -1,5 +1,5 @@
 {
-  "version": "v16.5.8",
+  "version": "v16.5.20",
   "script_order": [
     "theme-system.js",
     "modules/rawat-inap/core.js",
@@ -79,5 +79,25 @@
       "Login glass selectors and inpatient building hierarchy contracts"
     ],
     "limitation": "Pemeriksaan statis dan startup smoke lulus; pengujian browser end-to-end Android tetap harus dilakukan manual."
+  },
+  "integrated_3d_glass_ui": {
+    "goal": "Mengintegrasikan komposisi kawasan 3D pada login dan hub unit pada dashboard admin tanpa state bisnis terpisah.",
+    "files_changed": [
+      "index.html",
+      "style.css",
+      "theme-system.js",
+      "modules/01-core-store-master.js",
+      "modules/02-navigation-auth-shell.js",
+      "sw.js"
+    ],
+    "standalone_page_removed": "kawasan-3d.html",
+    "theme_compatibility": "Katalog tema dan key simrs.theme.active tetap dipertahankan; token visual kawasan menggunakan accent/accent-2 dari tema aktif.",
+    "validation": [
+      "Integrated campus smoke contracts",
+      "Theme and business preservation contracts",
+      "Accessibility/responsive static contracts",
+      "Workflow regression contracts",
+      "Startup smoke"
+    ]
   }
 }
