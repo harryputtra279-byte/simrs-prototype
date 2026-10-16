@@ -5,26 +5,25 @@
 //
 // PENTING: SW_VERSION harus dinaikkan setiap kali salah satu modules/*.js, style.css, atau qrcode.lib.js berubah,
 // supaya browser tahu ada versi baru dan mengambil file segar (bukan memakai cache lama selamanya).
-const SW_VERSION = 'v16.5.20';
+const SW_VERSION = 'v16.5.21';
 const CACHE_NAME = 'simrs-prototype-' + SW_VERSION;
 const APP_SHELL = [
   './',
   './index.html',
-  './theme-system.js?v=16.5.20',
-  './style.css?v=16.5.20',
-  './modules/rawat-inap/core.js?v=16.5.20',
-  './modules/01-core-store-master.js?v=16.5.20',
-  './modules/02-navigation-auth-shell.js?v=16.5.20',
-  './modules/03-patient-app.js?v=16.5.20',
-  './modules/04-registration-booking.js?v=16.5.20',
-  './modules/05-outpatient.js?v=16.5.20',
-  './modules/06-diagnostics-pharmacy-cashier.js?v=16.5.20',
-  './modules/07-inpatient-medical-records.js?v=16.5.20',
-  './modules/08-queue-igd-bootstrap.js?v=16.5.20',
+  './theme-system.js?v=16.5.21',
+  './style.css?v=16.5.21',
+  './modules/rawat-inap/core.js?v=16.5.21',
+  './modules/01-core-store-master.js?v=16.5.21',
+  './modules/02-navigation-auth-shell.js?v=16.5.21',
+  './modules/03-patient-app.js?v=16.5.21',
+  './modules/04-registration-booking.js?v=16.5.21',
+  './modules/05-outpatient.js?v=16.5.21',
+  './modules/06-diagnostics-pharmacy-cashier.js?v=16.5.21',
+  './modules/07-inpatient-medical-records.js?v=16.5.21',
+  './modules/08-queue-igd-bootstrap.js?v=16.5.21',
 
   './qrcode.lib.js',
   './manifest.json',
-  './theme-system.js?v=16.5.20',
   './icon-192.png',
   './icon-512.png',
   './icon-512-maskable.png',
