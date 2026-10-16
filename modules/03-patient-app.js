@@ -699,19 +699,21 @@ function renderPatientJourneyMapFromSteps(steps, currentLabel){
   if(!Array.isArray(steps)||!steps.length)return '';
   const states=steps.map(function(step){return step.state==='done'?'done':step.state==='active'?'active':'pending';});
   const found=states.findIndex(function(state){return state==='active';});
-  const activeIndex=found>=0?found:Math.max(0,states.findIndex(function(state){return state==='pending';}));
+  const pendingIndex=states.findIndex(function(state){return state==='pending';});
+  const activeIndex=found>=0?found:(pendingIndex>=0?pendingIndex:Math.max(0,states.length-1));
   const current=steps[activeIndex]||steps[steps.length-1];
   const progress=steps.length>1?activeIndex/(steps.length-1)*100:0;
   const nodes=steps.map(function(step,i){const state=states[i];return '<div class="journey-map-node '+state+'" data-journey-key="'+esc(step.key||step.label)+'"><span class="journey-map-building" aria-hidden="true"><i></i><i></i><i></i><b>'+(state==='done'?'✓':esc(step.icon||'•'))+'</b></span><strong>'+esc(step.label)+'</strong></div>';}).join('');
   const finished=states.every(function(state){return state==='done';});
-  return '<section class="patient-journey-map" aria-label="Peta perjalanan layanan pasien"><div class="journey-map-head"><div><span class="simrs-eyebrow">PETA PERJALANAN</span><h3>Lokasi layanan Anda</h3></div><span class="journey-map-current">'+esc(currentLabel||current.sub||current.label)+'</span></div><div class="journey-map-scene" style="--journey-count:'+steps.length+'"><div class="journey-map-ground" aria-hidden="true"></div><div class="journey-map-route" style="--journey-progress:'+progress+'%" aria-hidden="true"></div><div class="journey-map-nodes">'+nodes+'</div><div class="journey-map-person '+(finished?'is-finished':'')+'" style="--journey-person-x:'+progress+'%" aria-label="Posisi pasien pada tahap '+esc(current.label)+'"><span aria-hidden="true">●</span><b aria-hidden="true">●</b><i aria-hidden="true">▰</i></div></div><p class="journey-map-note">Figur menunjukkan tahap pelayanan yang tercatat, bukan posisi GPS. Perpindahan mengikuti konfirmasi petugas.</p></section>';
+  return '<section class="patient-journey-map" aria-label="Peta perjalanan layanan pasien"><div class="journey-map-head"><div><span class="simrs-eyebrow">PETA PERJALANAN</span><h3>Lokasi layanan Anda</h3></div><span class="journey-map-current">'+esc(currentLabel||current.sub||current.label)+'</span></div><div class="journey-map-scene" style="--journey-count:'+steps.length+'"><div class="journey-map-ground" aria-hidden="true"></div><div class="journey-map-route" style="--journey-progress:'+progress+'%" aria-hidden="true"></div><div class="journey-map-nodes">'+nodes+'</div><div class="journey-map-person '+(finished?'is-finished':'')+'" style="--journey-person-x:'+progress+'%;--journey-person-y:'+(activeIndex%2===0?'30%':'69%')+'" aria-label="Posisi pasien pada tahap '+esc(current.label)+'"><span aria-hidden="true">●</span><b aria-hidden="true">●</b><i aria-hidden="true">▰</i></div></div><p class="journey-map-note">Figur menunjukkan tahap pelayanan yang tercatat, bukan posisi GPS. Perpindahan mengikuti konfirmasi petugas.</p></section>';
 }
 
 function patientFlow(v){
   const steps=patientJourneyDefinition(v);
   const states=steps.map(function(step){return patientJourneyStepState(v,step);});
   const foundActive=states.findIndex(function(state){return state==='active';});
-  const activeIndex=foundActive>=0?foundActive:Math.max(0,states.findIndex(function(state){return state==='pending';}));
+  const pendingIndex=states.findIndex(function(state){return state==='pending';});
+  const activeIndex=foundActive>=0?foundActive:(pendingIndex>=0?pendingIndex:Math.max(0,states.length-1));
   const activeStep=steps[activeIndex]||steps[steps.length-1]||null;
   const routePct=steps.length>1?(activeIndex/(steps.length-1))*100:0;
   const journeyFinished=states.length>0&&states.every(function(state){return state==='done';});
@@ -720,7 +722,7 @@ function patientFlow(v){
     return '<div class="journey-map-node '+cls+'" data-journey-key="'+esc(step.key)+'"><span class="journey-map-building" aria-hidden="true"><i></i><i></i><i></i><b>'+(state==='done'?'✓':step.icon)+'</b></span><strong>'+esc(step.label)+'</strong></div>';
   }).join('');
   const sub=activeStep&&activeStep.sub?activeStep.sub:(activeStep?activeStep.label:'Menunggu pembaruan');
-  const map='<section class="patient-journey-map" aria-label="Peta perjalanan layanan pasien"><div class="journey-map-head"><div><span class="simrs-eyebrow">PETA PERJALANAN</span><h3>Lokasi layanan Anda</h3></div><span class="journey-map-current">'+esc(sub)+'</span></div><div class="journey-map-scene"><div class="journey-map-ground" aria-hidden="true"></div><div class="journey-map-route" style="--journey-progress:'+routePct+'%" aria-hidden="true"></div><div class="journey-map-nodes">'+mapNodes+'</div><div class="journey-map-person '+(journeyFinished||activeStep&&activeStep.key==='done'?'is-finished':'')+'" style="--journey-person-x:'+routePct+'%" aria-label="Posisi pasien pada tahap '+esc(activeStep?activeStep.label:'layanan')+'"><span aria-hidden="true">●</span><b aria-hidden="true">●</b><i aria-hidden="true">▰</i></div></div><p class="journey-map-note">Peta mengikuti status layanan yang tercatat, bukan pelacakan GPS. Lokasi berikutnya hanya ditampilkan bila terkait dengan episode ini.</p></section>';
+  const map='<section class="patient-journey-map" aria-label="Peta perjalanan layanan pasien"><div class="journey-map-head"><div><span class="simrs-eyebrow">PETA PERJALANAN</span><h3>Lokasi layanan Anda</h3></div><span class="journey-map-current">'+esc(sub)+'</span></div><div class="journey-map-scene"><div class="journey-map-ground" aria-hidden="true"></div><div class="journey-map-route" style="--journey-progress:'+routePct+'%" aria-hidden="true"></div><div class="journey-map-nodes">'+mapNodes+'</div><div class="journey-map-person '+(journeyFinished||activeStep&&activeStep.key==='done'?'is-finished':'')+'" style="--journey-person-x:'+routePct+'%;--journey-person-y:'+(activeIndex%2===0?'30%':'69%')+'" aria-label="Posisi pasien pada tahap '+esc(activeStep?activeStep.label:'layanan')+'"><span aria-hidden="true">●</span><b aria-hidden="true">●</b><i aria-hidden="true">▰</i></div></div><p class="journey-map-note">Peta mengikuti status layanan yang tercatat, bukan pelacakan GPS. Lokasi berikutnya hanya ditampilkan bila terkait dengan episode ini.</p></section>';
   const timeline=steps.map(function(step,i){
     const state=states[i],isDone=state==='done',isActive=state==='active';
     const sub=step.sub?'<small>'+esc(step.sub)+'</small>':'<small>'+esc(step.key.toUpperCase())+'</small>';
