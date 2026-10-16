@@ -1352,7 +1352,7 @@ html[data-theme-kind="nature"][data-theme-id="sakura-garden"]::before,html[data-
 
 
 /* =====================================================================
-   PENCARIAN KODE: V16.5.23 — SAMSUNG GLASS 3D NAV ICONS + PATIENT JOURNEY MAP
+   PENCARIAN KODE: V16.5.24 — SAMSUNG GLASS 3D NAV ICONS + PATIENT JOURNEY MAP
    Ikon navigasi dibuat konsisten lewat wadah glass; peta pasien mengikuti status episode.
    ===================================================================== */
 .bottom-tabbar .tab-item .ic,.nav-item .ic{
@@ -1384,7 +1384,7 @@ html[data-theme-kind="nature"][data-theme-id="sakura-garden"]::before,html[data-
 @media(prefers-reduced-motion:reduce){.bottom-tabbar .tab-item .ic,.nav-item .ic,.journey-map-person{transition:none!important}.bottom-tabbar .tab-item:active .ic,.nav-item:active .ic{transform:none}}
 @media(forced-colors:active){.journey-map-node,.journey-map-building,.journey-map-person span,.journey-map-person b,.journey-map-person i{border:1px solid CanvasText}.journey-map-route{background:Highlight}}
 
-/* V16.5.23 — final harmonisasi Samsung Glass 3D untuk hamburger + panel akses cepat */
+/* V16.5.24 — final harmonisasi Samsung Glass 3D untuk hamburger + panel akses cepat */
 .admin-top-menu-btn{
   gap:9px!important;padding:5px 12px 5px 6px!important;border:1.8px solid rgba(255,255,255,.96)!important;
   background:linear-gradient(135deg,rgba(255,255,255,.96),color-mix(in srgb,var(--accent,#8b5cf6) 9%,white) 58%,color-mix(in srgb,var(--accent-2,#ec4899) 12%,white))!important;
