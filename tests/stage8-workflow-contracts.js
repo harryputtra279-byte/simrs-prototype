@@ -52,8 +52,8 @@ if (duplicates.length) duplicates.forEach(([name, locations]) => fail(`Deklarasi
 else pass('Tidak ditemukan deklarasi fungsi global duplikat antar-modul');
 
 // Version and cache consistency.
-if (!html.includes('v16.5.24') || !core.includes("PROTOTYPE_VERSION = 'v16.5.24'") || !sw.includes("const SW_VERSION = 'v16.5.24'")) fail('Versi index/core service worker tidak seragam v16.5.24');
-else pass('Versi runtime, aset, dan Service Worker seragam v16.5.24');
+if (!html.includes('v16.5.25') || !core.includes("PROTOTYPE_VERSION = 'v16.5.25'") || !sw.includes("const SW_VERSION = 'v16.5.25'")) fail('Versi index/core service worker tidak seragam v16.5.25');
+else pass('Versi runtime, aset, dan Service Worker seragam v16.5.25');
 
 // Login demo grouping must remain presentational and expose the five agreed service units.
 const auth = read('modules/02-navigation-auth-shell.js');
@@ -150,7 +150,7 @@ for (const [name, ok] of [
  ['Tombol Pratinjau tersedia', themeV16510.includes('id="simrs-theme-preview"') && themeV16510.includes("paint(t);root.querySelector('#simrs-theme-selected-label').textContent='Pratinjau aktif:")],
  ['Tombol Terapkan Tema tersedia', themeV16510.includes('id="simrs-theme-apply"') && themeV16510.includes('apply(t);root.querySelector')],
  ['Memilih kartu tidak langsung menerapkan tema', themeV16510.includes("b.onclick=()=>{root.dataset.selectedTheme=t.id")],
- ['Cache dinaikkan ke 16.5.24', read('sw.js').includes('v16.5.24')],
+ ['Cache dinaikkan ke 16.5.25', read('sw.js').includes('v16.5.25')],
 ]) { if (ok) pass(name); else fail(name); }
 
 // V16.5.13: manual IGD registration, outside-dismiss modal, and 20/20 theme categories.
