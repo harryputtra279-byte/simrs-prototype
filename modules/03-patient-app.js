@@ -697,11 +697,22 @@ function patientJourneyStepState(v, step){
    sebuah tombol/tampilan dibuka. */
 function patientFlow(v){
   const steps=patientJourneyDefinition(v);
-  return steps.map(function(step){
-    const state=patientJourneyStepState(v,step),isDone=state==='done',isActive=state==='active';
+  const states=steps.map(function(step){return patientJourneyStepState(v,step);});
+  const activeIndex=Math.max(0,states.findIndex(function(state){return state==='active';}));
+  const activeStep=steps[activeIndex]||steps[0];
+  const routePct=steps.length>1?(activeIndex/(steps.length-1))*100:0;
+  const mapNodes=steps.map(function(step,i){
+    const state=states[i],cls=state==='done'?'done':state==='active'?'active':'pending';
+    return '<div class="journey-map-node '+cls+'" data-journey-key="'+esc(step.key)+'"><span class="journey-map-building" aria-hidden="true"><i></i><i></i><i></i><b>'+(state==='done'?'✓':step.icon)+'</b></span><strong>'+esc(step.label)+'</strong></div>';
+  }).join('');
+  const sub=activeStep&&activeStep.sub?activeStep.sub:(activeStep?activeStep.label:'Menunggu pembaruan');
+  const map='<section class="patient-journey-map" aria-label="Peta perjalanan layanan pasien"><div class="journey-map-head"><div><span class="simrs-eyebrow">PETA PERJALANAN</span><h3>Lokasi layanan Anda</h3></div><span class="journey-map-current">'+esc(sub)+'</span></div><div class="journey-map-scene"><div class="journey-map-ground" aria-hidden="true"></div><div class="journey-map-route" style="--journey-progress:'+routePct+'%" aria-hidden="true"></div><div class="journey-map-nodes">'+mapNodes+'</div><div class="journey-map-person '+(activeStep&&activeStep.key==='done'?'is-finished':'')+'" style="--journey-person-x:'+routePct+'%" aria-label="Posisi pasien pada tahap '+esc(activeStep?activeStep.label:'layanan')+'"><span aria-hidden="true">●</span><b aria-hidden="true">●</b><i aria-hidden="true">▰</i></div></div><p class="journey-map-note">Peta mengikuti status layanan yang tercatat, bukan pelacakan GPS. Lokasi berikutnya hanya ditampilkan bila terkait dengan episode ini.</p></section>';
+  const timeline=steps.map(function(step,i){
+    const state=states[i],isDone=state==='done',isActive=state==='active';
     const sub=step.sub?'<small>'+esc(step.sub)+'</small>':'<small>'+esc(step.key.toUpperCase())+'</small>';
     return '<div class="patient-flow-step '+(isDone?'done ':'')+(isActive?'active ':'')+' '+(state==='pending'?'pending':'')+'"><span>'+(isDone?'✓':step.icon)+'</span><div><strong>'+esc(step.label)+'</strong>'+sub+'</div></div>';
   }).join('');
+  return map+'<div class="patient-flow-timeline" aria-label="Timeline status layanan">'+timeline+'</div>';
 }
 /* PENCARIAN KODE: MODUL APLIKASI PASIEN — IZIN NOTIFIKASI
    Mengelola kesiapan notifikasi di browser. Penolakan izin tidak boleh

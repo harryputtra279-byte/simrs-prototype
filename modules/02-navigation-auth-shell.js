@@ -322,10 +322,10 @@ function openAdminMenuFolder(){
   // Menu Pelayanan superuser: tepat 16 akses cepat dalam grid 4×4.
   // Semua route tetap terdaftar di sidebar desktop; kartu di sini adalah akses cepat.
   const ordered = ADMIN_SERVICE_MENU_ROUTES.map(function(h){return NAV_ITEMS.find(function(n){return n.hash===h;});}).filter(Boolean);
-  const cards=ordered.map(function(n){return '<button class="admin-folder-item" data-nav="'+n.hash+'"><span class="admin-folder-icon">'+n.ic+'</span><span>'+esc(n.label)+'</span></button>';}).join('');
+  const cards=ordered.map(function(n){return '<button type="button" class="admin-folder-item" data-nav="'+n.hash+'" aria-label="Buka modul '+esc(n.label)+'"><span class="admin-folder-icon" aria-hidden="true">'+n.ic+'</span><span>'+esc(n.label)+'</span></button>';}).join('');
   document.getElementById('modal-root').innerHTML =
-    '<div class="sheet-overlay admin-folder-overlay" id="modal-overlay"><div class="admin-menu-folder">'+
-      '<div class="admin-folder-head"><div><div class="ops-eyebrow">AKSES CEPAT SUPERUSER</div><h2>Pelayanan</h2><div class="hint">16 modul dalam susunan ikon 4 × 4.</div></div><button class="btn btn-ghost btn-icon" id="btn-close-admin-folder" aria-label="Tutup menu Pelayanan">✕</button></div>'+
+    '<div class="sheet-overlay admin-folder-overlay" id="modal-overlay"><div class="admin-menu-folder" role="dialog" aria-modal="true" aria-labelledby="admin-folder-title">'+
+      '<div class="admin-folder-head"><div><div class="ops-eyebrow">AKSES CEPAT SUPERUSER</div><h2 id="admin-folder-title">Pelayanan</h2><div class="hint">16 modul dalam susunan ikon 4 × 4.</div></div><button class="btn btn-ghost btn-icon" id="btn-close-admin-folder" aria-label="Tutup menu Pelayanan">✕</button></div>'+
       '<div class="admin-folder-grid">'+cards+'</div>'+
     '</div></div>';
   document.getElementById('modal-overlay').addEventListener('click',function(e){if(e.target.id==='modal-overlay')closeModal();});
