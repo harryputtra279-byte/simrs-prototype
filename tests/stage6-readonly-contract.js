@@ -11,5 +11,5 @@ const checks=[
  ['navigasi alternatif dapat diakses keyboard',nav.includes('aria-label="Buka ')],
  ['komponen memakai key database hanya untuk alur SIMRS yang ada',fs.readFileSync(path.join(root,'modules/01-core-store-master.js'),'utf8').includes('simrs_db_v1')],
  ['tidak ada perubahan localStorage di renderer kampus',!nav.slice(nav.indexOf('function renderCampusNavigator()'),nav.indexOf('function renderLogin()')).match(/localStorage\.(setItem|removeItem|clear)\s*\(/)],
- ['penanda pencarian kode tersedia',nav.includes('PENCARIAN KODE: NAVIGASI KAMPUS 3D TERINTEGRASI')&&css.includes('PENCARIAN KODE: V16.5.21')]
+ ['penanda pencarian kode tersedia',nav.includes('PENCARIAN KODE: NAVIGASI KAMPUS 3D TERINTEGRASI')&&css.includes('PENCARIAN KODE: V16.5.23')]
 ];let failed=0;for(const [n,ok] of checks){console.log(`${ok?'PASS':'FAIL'} ${n}`);if(!ok)failed++;}if(failed)process.exit(1);console.log(`LULUS ${checks.length}/${checks.length} kontrak statis.`);
