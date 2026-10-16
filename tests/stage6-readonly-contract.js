@@ -1,4 +1,15 @@
-/* PENCARIAN KODE: TEST_THEME_AND_BUSINESS_PRESERVATION */
-const fs=require('fs'),path=require('path'),root=path.resolve(__dirname,'..');
-const theme=fs.readFileSync(path.join(root,'theme-system.js'),'utf8'),nav=fs.readFileSync(path.join(root,'modules/02-navigation-auth-shell.js'),'utf8');
-const checks=[['key tema tersimpan dipertahankan',theme.includes("simrs.theme.active")],['preview terpisah dari apply',theme.includes('function apply(t)')&&theme.includes("simrs-theme-preview")&&theme.includes("simrs-theme-apply")],['reset tema tersedia',theme.includes('simrs-theme-reset')],['role route rules tetap ada',nav.includes('const ROLE_ROUTE_RULES')],['login handler tetap dipasang',nav.includes("addEventListener('submit', handleLogin)")],['akun demo tetap tersedia',nav.includes('chipsForDemo()')],['tema tidak menulis database SIMRS',!theme.includes("localStorage.setItem('simrs_db_v1'")]];let fail=0;for(const[n,ok]of checks){console.log(`${ok?'PASS':'FAIL'} ${n}`);if(!ok)fail++}if(fail)process.exit(1);console.log(`LULUS ${checks.length}/${checks.length}`);
+/* PENCARIAN KODE: STAGE6_READONLY_CONTRACT — kontrak navigasi kampus terintegrasi. */
+const fs=require('fs'),path=require('path');
+const root=path.join(__dirname,'..');
+const nav=fs.readFileSync(path.join(root,'modules/02-navigation-auth-shell.js'),'utf8');
+const css=fs.readFileSync(path.join(root,'style.css'),'utf8');
+const checks=[
+ ['renderer kampus terintegrasi tersedia',nav.includes('function renderCampusNavigator()')],
+ ['dashboard memakai renderer kampus',nav.includes('renderCampusNavigator()+')],
+ ['navigasi unit memeriksa hak akses role',nav.includes('isRouteAllowed(u.route,activeRole)')],
+ ['kartu gedung memakai data-nav',nav.includes('class="simrs-campus-unit ')&&nav.includes('data-nav="\'+u.route+\'"')],
+ ['navigasi alternatif dapat diakses keyboard',nav.includes('aria-label="Buka ')],
+ ['komponen memakai key database hanya untuk alur SIMRS yang ada',fs.readFileSync(path.join(root,'modules/01-core-store-master.js'),'utf8').includes('simrs_db_v1')],
+ ['tidak ada perubahan localStorage di renderer kampus',!nav.slice(nav.indexOf('function renderCampusNavigator()'),nav.indexOf('function renderLogin()')).match(/localStorage\.(setItem|removeItem|clear)\s*\(/)],
+ ['penanda pencarian kode tersedia',nav.includes('PENCARIAN KODE: NAVIGASI KAMPUS 3D TERINTEGRASI')&&css.includes('PENCARIAN KODE: V16.5.21')]
+];let failed=0;for(const [n,ok] of checks){console.log(`${ok?'PASS':'FAIL'} ${n}`);if(!ok)failed++;}if(failed)process.exit(1);console.log(`LULUS ${checks.length}/${checks.length} kontrak statis.`);

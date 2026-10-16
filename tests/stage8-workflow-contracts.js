@@ -13,6 +13,7 @@ const pass = message => console.log('OK:', message);
 const html = read('index.html');
 const map = JSON.parse(read('MODULE_MAP.json'));
 const sw = read('sw.js');
+const nav = read('modules/02-navigation-auth-shell.js');
 const core = read('modules/01-core-store-master.js');
 const patient = read('modules/03-patient-app.js');
 const registration = read('modules/04-registration-booking.js');
@@ -51,8 +52,8 @@ if (duplicates.length) duplicates.forEach(([name, locations]) => fail(`Deklarasi
 else pass('Tidak ditemukan deklarasi fungsi global duplikat antar-modul');
 
 // Version and cache consistency.
-if (!html.includes('v16.5.20') || !core.includes("PROTOTYPE_VERSION = 'v16.5.20'") || !sw.includes("const SW_VERSION = 'v16.5.20'")) fail('Versi index/core service worker tidak seragam v16.5.20');
-else pass('Versi runtime, aset, dan Service Worker seragam v16.5.20');
+if (!html.includes('v16.5.21') || !core.includes("PROTOTYPE_VERSION = 'v16.5.21'") || !sw.includes("const SW_VERSION = 'v16.5.21'")) fail('Versi index/core service worker tidak seragam v16.5.21');
+else pass('Versi runtime, aset, dan Service Worker seragam v16.5.21');
 
 // Login demo grouping must remain presentational and expose the five agreed service units.
 const auth = read('modules/02-navigation-auth-shell.js');
@@ -97,7 +98,7 @@ const css = read('style.css');
 const themeContracts = [
  ['Tema Aplikasi tersedia sebagai tab Master Data untuk Super User', inpatient.includes('Tema Aplikasi</button>') && inpatient.includes('SIMRS_THEME.renderMasterThemeTab()') && theme.includes('function isSuperUser()')],
  ['Galeri tema tidak lagi memakai tombol mengambang', !css.includes('#simrs-theme-open{position:fixed') && !theme.includes('simrs-theme-open')],
- ['Logo dan judul login memiliki glass styling sesuai markup aktual', css.includes('.login-emblem{') && css.includes('.login-hero h1{')],
+ ['Logo dan judul login memiliki glass styling sesuai markup aktual', css.includes('.simrs-brand-mark') && css.includes('.simrs-login-campus') && nav.includes('simrs-login-brand')],
  ['Daftar gedung tidak disaring hanya karena tidak memiliki bed kosong', inpatient.includes('MASTER BED V16.5.8') && inpatient.includes('return (Store.data.wards||[]).slice();}')],
 ];
 for (const [name, ok] of themeContracts) { if (ok) pass(name); else fail(name); }
@@ -149,7 +150,7 @@ for (const [name, ok] of [
  ['Tombol Pratinjau tersedia', themeV16510.includes('id="simrs-theme-preview"') && themeV16510.includes("paint(t);root.querySelector('#simrs-theme-selected-label').textContent='Pratinjau aktif:")],
  ['Tombol Terapkan Tema tersedia', themeV16510.includes('id="simrs-theme-apply"') && themeV16510.includes('apply(t);root.querySelector')],
  ['Memilih kartu tidak langsung menerapkan tema', themeV16510.includes("b.onclick=()=>{root.dataset.selectedTheme=t.id")],
- ['Cache dinaikkan ke 16.5.20', read('sw.js').includes('v16.5.20')],
+ ['Cache dinaikkan ke 16.5.21', read('sw.js').includes('v16.5.21')],
 ]) { if (ok) pass(name); else fail(name); }
 
 // V16.5.13: manual IGD registration, outside-dismiss modal, and 20/20 theme categories.

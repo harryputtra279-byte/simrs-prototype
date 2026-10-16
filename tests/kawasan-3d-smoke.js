@@ -1,13 +1,14 @@
-/* PENCARIAN KODE: TEST_INTEGRATED_CAMPUS_SMOKE — V16.5.20 */
-const fs=require('fs'),path=require('path'),root=path.resolve(__dirname,'..');
+/* PENCARIAN KODE: TEST_KAWASAN_3D_SMOKE — integrasi pengganti halaman 3D mandiri. */
+const fs=require('fs'),path=require('path');
+const root=path.join(__dirname,'..');
 const nav=fs.readFileSync(path.join(root,'modules/02-navigation-auth-shell.js'),'utf8');
 const css=fs.readFileSync(path.join(root,'style.css'),'utf8');
 const checks=[
- ['login memiliki scene kawasan terintegrasi',nav.includes('simrs-login-scene')&&nav.includes('campus-isometric')],
- ['scene punya tiga bangunan layanan',nav.includes('campus-main-building')&&nav.includes('campus-clinic-building')&&nav.includes('campus-emergency-building')],
- ['dashboard memiliki hub unit',nav.includes('simrs-campus-hub')&&nav.includes('campus-hub-grid')],
- ['akses unit tetap memakai data-nav',nav.includes('class="campus-unit campus-unit-main" data-nav="dashboard"')],
- ['tema visual memakai token aktif',css.includes('var(--accent)')&&css.includes('var(--accent-2)')],
- ['mobile layout dan reduced motion tersedia',css.includes('@media(max-width:600px)')&&css.includes('prefers-reduced-motion:reduce')],
- ['tidak ada tautan ke halaman 3D mandiri',!nav.includes('href="kawasan-3d.html"')&&!nav.includes('Buka Kawasan 3D')]
-];let fail=0;for(const [n,ok] of checks){console.log(`${ok?'PASS':'FAIL'} ${n}`);if(!ok)fail++}if(fail)process.exit(1);console.log(`LULUS ${checks.length}/${checks.length}`);
+ ['judul SIMRS Prototype',nav.includes('SIMRS PROTOTYPE')],
+ ['unit pelayanan menjadi hotspot gedung',nav.includes('simrs-campus-unit')&&nav.includes('data-nav="\'+u.route+\'"')],
+ ['interaksi memakai tombol semantik',nav.includes('<button type="button" class="simrs-campus-unit ')],
+ ['penanda pencarian kode',nav.includes('PENCARIAN KODE: NAVIGASI KAMPUS 3D TERINTEGRASI')],
+ ['navigasi kampus memeriksa RBAC',nav.includes('isRouteAllowed(u.route,activeRole)')],
+ ['dashboard menyediakan navigasi kampus',nav.includes('renderCampusNavigator()+')],
+ ['login memiliki ilustrasi kampus 3D',nav.includes('simrs-login-campus')&&css.includes('.simrs-login-building-main')]
+];let failed=0;for(const [name,ok] of checks){console.log(`${ok?'PASS':'FAIL'} ${name}`);if(!ok)failed++;}if(failed)process.exit(1);console.log(`${checks.length}/${checks.length} checks passed`);
