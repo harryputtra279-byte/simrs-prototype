@@ -11,10 +11,10 @@ const checks = [
   ['gedung menggunakan navigasi data-nav dan RBAC', nav.includes('isRouteAllowed(u.route,activeRole)') && nav.includes("data-nav=\"'+u.route+'\"")],
   ['login menyatukan identitas dengan ilustrasi kampus', nav.includes('simrs-login-brand') && nav.includes('simrs-login-campus')],
   ['login tidak lagi menawarkan halaman Kawasan 3D terpisah', !nav.includes('Buka Kawasan 3D') && !nav.includes('title="Buka visualisasi kawasan rumah sakit"')],
-  ['Glass UI terintegrasi menggunakan token tema', css.includes('PENCARIAN KODE: V16.5.23') && css.includes('--simrs-glass-surface')],
+  ['Glass UI terintegrasi menggunakan token tema', css.includes('PENCARIAN KODE: V16.5.24') && css.includes('--simrs-glass-surface')],
   ['layout mobile dan reduced-motion tersedia', css.includes('@media(max-width:760px)') && css.includes('prefers-reduced-motion:reduce')],
-  ['versi rilis seragam', html.includes('v16.5.23') && core.includes("PROTOTYPE_VERSION = 'v16.5.23'") && sw.includes("SW_VERSION = 'v16.5.23'")],
-  ['service worker cache memakai versi rilis baru', sw.includes('style.css?v=16.5.23') && sw.includes('modules/02-navigation-auth-shell.js?v=16.5.23')]
+  ['versi rilis seragam', html.includes('v16.5.24') && core.includes("PROTOTYPE_VERSION = 'v16.5.24'") && sw.includes("SW_VERSION = 'v16.5.24'")],
+  ['service worker cache memakai versi rilis baru', sw.includes('style.css?v=16.5.24') && sw.includes('modules/02-navigation-auth-shell.js?v=16.5.24')]
 ];
 let failed = 0;
 for (const [name, ok] of checks) { console.log((ok ? 'PASS' : 'FAIL') + ' — ' + name); if (!ok) failed++; }
