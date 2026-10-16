@@ -419,51 +419,61 @@ function closeDrawer(){
 }
 
 /* =================================================================
+   PENCARIAN KODE: NAVIGASI KAMPUS 3D TERINTEGRASI
+   Kampus menjadi navigasi visual di dashboard; setiap tujuan tetap melalui RBAC.
+   ================================================================= */
+function renderCampusNavigator(){
+  const units = [
+    {route:'pendaftaran', icon:'📝', name:'Pendaftaran', desc:'Loket & check-in', tone:'mint', shape:'clinic'},
+    {route:'poli', icon:'🩺', name:'Poliklinik', desc:'Rawat jalan', tone:'violet', shape:'main'},
+    {route:'ranap', icon:'🛏️', name:'Rawat Inap', desc:'Bangsal & perawatan', tone:'blue', shape:'tower'},
+    {route:'igd', icon:'🚑', name:'IGD', desc:'Instalasi gawat darurat', tone:'rose', shape:'emergency'},
+    {route:'lab', icon:'🧪', name:'Laboratorium', desc:'Pemeriksaan penunjang', tone:'cyan', shape:'clinic'},
+    {route:'farmasi-rawat-jalan', icon:'💊', name:'Farmasi', desc:'Resep & obat', tone:'amber', shape:'clinic'},
+    {route:'kasir-rawat-jalan', icon:'🧾', name:'Kasir', desc:'Pembayaran layanan', tone:'slate', shape:'clinic'},
+    {route:'rekam-medis', icon:'📋', name:'Rekam Medis', desc:'Dokumentasi klinis', tone:'green', shape:'clinic'}
+  ];
+  const activeRole=Session.currentUser&&Session.currentUser.role;
+  const available=units.filter(u=>!!activeRole&&isRouteAllowed(u.route,activeRole));
+  return '<section class="simrs-campus-nav" aria-labelledby="simrs-campus-title">'+
+    '<div class="simrs-campus-heading"><div><div class="simrs-eyebrow">SIMRS PROTOTYPE · SMART HOSPITAL</div><h2 id="simrs-campus-title">Kawasan layanan terintegrasi</h2><p>Pilih gedung untuk membuka unit kerja. Menu mengikuti hak akses akun.</p></div><span class="simrs-campus-live"><i></i> Sistem prototype</span></div>'+
+    '<div class="simrs-campus-scene"><div class="simrs-campus-skyline" aria-hidden="true"><span></span><span></span><span></span><span></span></div><div class="simrs-campus-ground" aria-hidden="true"></div><div class="simrs-campus-buildings">'+available.map((u,i)=>'<button type="button" class="simrs-campus-unit '+u.tone+' '+u.shape+'" data-nav="'+u.route+'" aria-label="Buka '+u.name+'"><span class="simrs-building-art" aria-hidden="true"><i></i><i></i><i></i><b></b></span><span class="simrs-unit-label"><strong>'+u.icon+' '+u.name+'</strong><small>'+u.desc+'</small></span></button>').join('')+'</div><div class="simrs-campus-road" aria-hidden="true"></div></div>'+
+    '<div class="simrs-campus-shortcuts">'+available.map(u=>'<button type="button" class="simrs-campus-shortcut" data-nav="'+u.route+'"><span>'+u.icon+'</span><span><strong>'+u.name+'</strong><small>'+u.desc+'</small></span><b aria-hidden="true">↗</b></button>').join('')+'</div>'+
+    '<p class="simrs-campus-note">Visualisasi konseptual untuk navigasi prototype, bukan peta fasilitas atau representasi bangunan rumah sakit yang terverifikasi.</p></section>';
+}
+
+/* =================================================================
    MODUL: AUTENTIKASI DAN PEMILIHAN AKUN DEMO
    PENCARIAN KODE: MODUL: LOGIN | FUNGSI: AKUN DEMO PER UNIT
    ================================================================= */
 function renderLogin(){
   document.getElementById('app').innerHTML =
-    '<main class="login-wrap simrs-login-scene">'+
-      '<section class="login-campus" aria-label="Ilustrasi kawasan rumah sakit SIMRS PROTOTYPE">'+
-        '<div class="campus-scene-kicker">DIGITAL HOSPITAL · INTEGRATED CARE</div>'+ 
-        '<div class="campus-scene-title"><span class="campus-pulse"></span><div><strong>SIMRS</strong><span>CONNECTED HOSPITAL</span></div></div>'+ 
-        '<div class="campus-isometric" aria-hidden="true">'+
-          '<div class="campus-platform"></div>'+ 
-          '<div class="campus-building campus-main-building"><div class="building-roof"><span>✚</span></div><div class="building-front"><div class="building-sign">HOSPITAL</div><div class="building-windows">'+('<i></i>'.repeat(12))+'</div><div class="building-entry"></div></div><div class="building-side"><div class="building-windows">'+('<i></i>'.repeat(8))+'</div></div></div>'+ 
-          '<div class="campus-building campus-clinic-building"><div class="building-roof"></div><div class="building-front"><div class="building-sign">POLI</div><div class="building-windows">'+('<i></i>'.repeat(6))+'</div></div><div class="building-side"><div class="building-windows">'+('<i></i>'.repeat(4))+'</div></div></div>'+ 
-          '<div class="campus-building campus-emergency-building"><div class="building-roof"><span>✚</span></div><div class="building-front"><div class="building-sign">IGD 24H</div><div class="building-windows">'+('<i></i>'.repeat(4))+'</div></div><div class="building-side"><div class="building-windows">'+('<i></i>'.repeat(3))+'</div></div></div>'+ 
-          '<div class="campus-road-line"></div><div class="campus-tree tree-a"></div><div class="campus-tree tree-b"></div><div class="campus-tree tree-c"></div>'+ 
-          '<div class="campus-float-card campus-card-one"><span>✚</span><div><b>Integrated Care</b><small>Alur layanan terhubung</small></div></div>'+ 
-          '<div class="campus-float-card campus-card-two"><span>⌁</span><div><b>Real-time Workflow</b><small>Monitoring operasional</small></div></div>'+ 
-        '</div>'+ 
-        '<div class="campus-scene-footer"><span>SMART · SECURE · CONNECTED</span><span class="campus-live-dot">PROTOTYPE</span></div>'+ 
-      '</section>'+ 
-      '<section class="login-panel" aria-label="Masuk ke SIMRS PROTOTYPE">'+
-      '<div class="login-hero">'+
-        '<div class="login-emblem"></div>'+
-        '<h1>SIMRS PROTOTYPE</h1>'+
-        '<div class="sub">SIMRS PROTOTYPE — Sistem Informasi Manajemen Rumah Sakit</div>'+
-        '<div class="ticket-hint">NO. ANTRIAN &nbsp;— · — · — —</div>'+
-      '</div>'+
-      '<div class="login-body">'+
+    '<div class="login-wrap simrs-login-v2"><div class="login-panel simrs-login-panel">'+
+      '<section class="login-hero simrs-login-hero">'+
+        '<div class="simrs-login-brand"><span class="simrs-brand-mark" aria-hidden="true"><svg viewBox="0 0 48 48"><path d="M24 4 43 15v18L24 44 5 33V15Z"/><path d="M24 13v22M13 24h22"/></svg></span><div><span class="simrs-brand-kicker">SMART HOSPITAL SYSTEM</span><h1>SIMRS PROTOTYPE</h1><p>Satu kawasan. Satu alur pelayanan.</p></div></div>'+
+        '<div class="simrs-login-campus" aria-hidden="true"><div class="simrs-login-orbit"></div><div class="simrs-login-land"></div><div class="simrs-login-building simrs-login-building-main"><i></i><i></i><i></i><b>✚</b></div><div class="simrs-login-building simrs-login-building-tower"><i></i><i></i><i></i></div><div class="simrs-login-building simrs-login-building-igd"><b>+</b><i></i><i></i></div><div class="simrs-login-path"></div><span class="simrs-campus-caption">INTEGRATED CARE CAMPUS</span></div>'+
+        '<div class="simrs-login-hero-foot"><span>✦ Terintegrasi</span><span>⌁ Berbasis peran</span><span>◈ PWA prototype</span></div>'+
+      '</section>'+
+      '<div class="login-body simrs-login-body">'+
+        '<div class="simrs-login-welcome"><span class="simrs-eyebrow">SELAMAT DATANG</span><h2>Masuk ke workspace</h2><p>Gunakan akun demo sesuai unit pelayanan untuk menjelajahi alur SIMRS.</p></div>'+
         '<div id="login-error"></div>'+
         '<form id="login-form">'+
-          '<div class="field"><label>Username</label><input type="text" id="login-username" autocomplete="username" required></div>'+
-          '<div class="field"><label>Password</label><input type="password" id="login-password" autocomplete="current-password" required></div>'+
-          '<button type="submit" class="btn btn-primary btn-block">Masuk</button>'+
+          '<div class="field"><label for="login-username">Username</label><input type="text" id="login-username" autocomplete="username" placeholder="Masukkan username" required></div>'+
+          '<div class="field"><label for="login-password">Password</label><input type="password" id="login-password" autocomplete="current-password" placeholder="Masukkan password" required></div>'+
+          '<button type="submit" class="btn btn-primary btn-block simrs-login-submit">Masuk ke SIMRS <span aria-hidden="true">→</span></button>'+
         '</form>'+
-        '<div class="login-divider">atau gunakan akun demo</div>'+
+        '<div class="login-divider">atau pilih akun demo</div>'+
         '<div class="chip-row">'+chipsForDemo()+'</div>'+
+        '<p class="simrs-login-disclaimer">Prototype demonstrasi. Gunakan data simulasi, bukan data pasien nyata.</p>'+
       '</div>'+
-      '</section>'+
-    '</main>';
+    '</div></div>';
 
   document.getElementById('login-form').addEventListener('submit', handleLogin);
   document.querySelectorAll('.chip').forEach(c=>{
     c.addEventListener('click', ()=> doLogin(c.dataset.username, c.dataset.password));
   });
 }
+
 function chipsForDemo(){
   // Pengelompokan visual saja: username, password, role, dan relasi akun tidak diubah.
   // Admin tetap tersedia sebagai akses sistem terpisah, di luar lima kelompok unit pelayanan.
@@ -684,19 +694,7 @@ function renderDashboard(){
   };
   document.getElementById('main-content').innerHTML=
     '<div class="ops-hero"><div><div class="ops-eyebrow">SIMRS COMMAND CENTER · SIMRS PROTOTYPE</div><h2>Monitoring Operasional Harian</h2><p>'+formatTanggalIndo(today)+' · Rawat jalan, IGD, rawat inap, penunjang, dan farmasi.</p></div><div class="ops-hero-actions"><button class="btn btn-outline btn-sm" id="btn-dashboard-refresh">↻ Perbarui</button><button class="btn btn-primary btn-sm" data-nav="cek-antrian">📺 Papan Antrian</button></div></div>'+
-    '<section class="simrs-campus-hub" aria-label="Pusat unit layanan rumah sakit">'+
-      '<div class="campus-hub-heading"><div><span class="ops-eyebrow">HOSPITAL DIGITAL TWIN</span><h2>Kawasan Layanan Terintegrasi</h2><p>Pilih unit untuk membuka workspace. Hak akses tetap mengikuti akun yang sedang aktif.</p></div><span class="campus-hub-badge"><i></i> SISTEM AKTIF</span></div>'+ 
-      '<div class="campus-hub-grid">'+
-        '<button type="button" class="campus-unit campus-unit-main" data-nav="dashboard"><span class="campus-unit-icon">✚</span><span><b>Command Center</b><small>Monitoring operasional</small></span><em>↗</em></button>'+ 
-        '<button type="button" class="campus-unit" data-nav="pendaftaran"><span class="campus-unit-icon">▤</span><span><b>Pendaftaran</b><small>Registrasi & booking</small></span><em>↗</em></button>'+ 
-        '<button type="button" class="campus-unit" data-nav="poli"><span class="campus-unit-icon">⚕</span><span><b>Rawat Jalan</b><small>Poli & pemeriksaan</small></span><em>↗</em></button>'+ 
-        '<button type="button" class="campus-unit" data-nav="igd"><span class="campus-unit-icon">✚</span><span><b>IGD</b><small>Pelayanan darurat</small></span><em>↗</em></button>'+ 
-        '<button type="button" class="campus-unit" data-nav="ranap"><span class="campus-unit-icon">▥</span><span><b>Rawat Inap</b><small>Ruang & perawatan</small></span><em>↗</em></button>'+ 
-        '<button type="button" class="campus-unit" data-nav="lab"><span class="campus-unit-icon">⚗</span><span><b>Laboratorium</b><small>Pemeriksaan penunjang</small></span><em>↗</em></button>'+ 
-        '<button type="button" class="campus-unit" data-nav="radiologi"><span class="campus-unit-icon">◉</span><span><b>Radiologi</b><small>Diagnostik pencitraan</small></span><em>↗</em></button>'+ 
-        '<button type="button" class="campus-unit" data-nav="master-data"><span class="campus-unit-icon">⚙</span><span><b>Administrasi</b><small>Pengaturan & master data</small></span><em>↗</em></button>'+ 
-      '</div>'+ 
-    '</section>'+ 
+    renderCampusNavigator()+
     '<div class="ops-kpi-grid">'+
       kpi('👥','Pasien Terdaftar',visits.length,'kunjungan tercatat hari ini')+
       kpi('🎫','Antrean Menunggu',waiting,'semua poli',waiting>=((settings.alertQueueThreshold)||10)?'hot':'')+
