@@ -1430,3 +1430,149 @@ html[data-theme-kind="nature"][data-theme-id="sakura-garden"]::before,html[data-
 @media(max-width:430px){.admin-folder-grid{gap:6px!important}.admin-folder-item{min-height:74px!important;border-radius:14px!important}.admin-folder-icon{width:33px;height:33px;font-size:18px!important}.admin-folder-item>span:last-child{font-size:9px}.admin-menu-folder{padding:12px!important;border-radius:20px!important}}
 @media(prefers-reduced-motion:reduce){.admin-top-menu-btn,.admin-folder-item{transition:none!important}.admin-top-menu-btn:hover,.admin-folder-item:hover,.admin-folder-item:active{transform:none!important}}
 @media(forced-colors:active){.admin-menu-folder,.admin-folder-item,.admin-folder-icon,.admin-top-menu-btn,.admin-menu-hamburger{forced-color-adjust:auto;border:1px solid ButtonText!important;background:Canvas!important;color:CanvasText!important;box-shadow:none!important}.admin-folder-item:focus-visible,.admin-top-menu-btn:focus-visible{outline:2px solid Highlight!important}}
+
+
+/* =========================================================
+   PENCARIAN KODE: V16.5.25 RESPONSIVE + RUTE ZIG-ZAG
+   Audit lintas peran: semua halaman, navbar, kartu, modal,
+   formulir dan peta perjalanan harus mengikuti lebar viewport.
+   ========================================================= */
+html, body { max-width:100%; }
+body { overflow-x:hidden; }
+#app, .app-shell, .main-area, #main-content { min-width:0; max-width:100%; }
+.main-area, #main-content { box-sizing:border-box; }
+#main-content > *, .panel, .panel-body, .card, .card-body,
+.ops-grid-main > *, .ops-grid > *, .grid > *, .form-grid > *,
+.patient-inpatient-grid > *, .stat-grid > *, .dashboard-grid > * {
+  min-width:0; max-width:100%;
+}
+img, video, canvas, iframe { max-width:100%; }
+input, select, textarea, button { max-width:100%; box-sizing:border-box; }
+table { max-width:100%; }
+.table-wrap, .table-responsive, .data-table-wrap, .queue-table-wrap {
+  max-width:100%; overflow-x:auto; overscroll-behavior-x:contain;
+}
+.modal, .modal-content, .modal-dialog, .bottom-sheet {
+  box-sizing:border-box; max-width:calc(100vw - 24px);
+}
+.topbar { min-width:0; max-width:100%; }
+.topbar > *, .topbar-actions, .topbar-right { min-width:0; }
+.topbar button, .topbar .icon-btn, .topbar .icon-button,
+.admin-top-menu-btn, .notification-btn, .profile-btn {
+  min-height:38px; box-sizing:border-box;
+}
+.sidebar-menu .nav-item { min-width:0; }
+.sidebar-menu .nav-item .label, .sidebar-menu .nav-item span {
+  overflow-wrap:anywhere;
+}
+
+/* Rute miniatur: gedung bergantian atas/bawah dan figur mengikuti baris aktif. */
+.journey-map-scene {
+  min-height:245px;
+  overflow:hidden;
+  padding:0;
+}
+.journey-map-nodes {
+  display:grid;
+  grid-template-columns:repeat(var(--journey-count, 4), minmax(0,1fr));
+  align-items:start;
+  gap:0;
+  padding:18px 4px 26px;
+}
+.journey-map-node {
+  position:relative;
+  min-width:0;
+  padding:0 2px;
+}
+.journey-map-node:nth-child(even) { margin-top:74px; }
+.journey-map-node:nth-child(odd) { margin-top:0; }
+.journey-map-node > strong {
+  max-width:100%;
+  font-size:clamp(8px, 1.8vw, 10px);
+  overflow-wrap:anywhere;
+}
+.journey-map-building {
+  width:clamp(28px, 5.5vw, 48px);
+  height:45px;
+  flex-shrink:0;
+}
+.journey-map-route {
+  left:4%; right:4%; top:0; height:100%;
+  background:transparent;
+  box-shadow:none;
+}
+.journey-map-route::before {
+  content:"";
+  position:absolute; inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 220' preserveAspectRatio='none'%3E%3Cpath d='M10 42 L90 42 L150 112 L230 112 L300 42 L380 42 L450 112 L590 112' fill='none' stroke='%239b70ed' stroke-width='5' stroke-linecap='round' stroke-linejoin='round' stroke-dasharray='8 7'/%3E%3C/svg%3E");
+  background-size:100% 100%; background-repeat:no-repeat; opacity:.8;
+}
+.journey-map-person {
+  left:calc(4% + (92% * var(--journey-person-x,0) / 100));
+  top:var(--journey-person-y,30%);
+  transform:translate(-50%,-50%);
+}
+.journey-map-person.is-finished { top:var(--journey-person-y,30%); }
+.patient-journey-map, .patient-flow-timeline { min-width:0; max-width:100%; }
+.patient-flow-timeline .patient-flow-step { overflow-wrap:anywhere; }
+.patient-journey-map { padding:clamp(10px,2.5vw,15px); }
+.journey-map-head { flex-wrap:wrap; min-width:0; }
+.journey-map-current { max-width:100%; overflow-wrap:anywhere; white-space:normal; }
+
+/* Navbar bersama: ukuran target sentuh konsisten, isi menu tetap per role. */
+.bottom-tabbar, .patient-bottom-nav {
+  box-sizing:border-box;
+  align-items:stretch;
+}
+.bottom-tabbar .tab-item, .patient-bottom-nav .tab-item {
+  flex:1 1 0; min-width:0; max-width:none;
+  justify-content:center; box-sizing:border-box;
+}
+.bottom-tabbar .tab-item .ic, .patient-bottom-nav .tab-item .ic {
+  display:inline-flex; align-items:center; justify-content:center;
+  line-height:1; flex:0 0 auto;
+}
+@media (max-width:760px) {
+  .app-shell { min-height:100dvh; }
+  .main-area { margin-left:0!important; width:100%; max-width:100vw; }
+  #main-content { width:100%; padding-left:clamp(10px,3vw,16px)!important;
+    padding-right:clamp(10px,3vw,16px)!important; }
+  .topbar { width:100%; gap:8px; padding-left:10px!important; padding-right:10px!important; }
+  .panel, .card, .stat, .ops-hero, .patient-hero { max-width:100%; }
+  .ops-grid-main, .ops-grid, .dashboard-grid, .form-grid {
+    grid-template-columns:minmax(0,1fr)!important;
+  }
+  .patient-inpatient-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .modal, .modal-content, .modal-dialog, .bottom-sheet {
+    width:calc(100vw - 20px)!important;
+    max-width:calc(100vw - 20px)!important;
+    margin-left:auto; margin-right:auto;
+  }
+  .bottom-tabbar, .patient-bottom-nav {
+    left:8px!important; right:8px!important; bottom:8px!important;
+    width:auto!important; max-width:none!important;
+    transform:none!important; gap:2px!important;
+    padding:5px!important;
+  }
+  .bottom-tabbar .tab-item, .patient-bottom-nav .tab-item {
+    padding:7px 2px!important; font-size:clamp(8px,2.5vw,10px)!important;
+    min-height:48px;
+  }
+  .bottom-tabbar .tab-item .ic, .patient-bottom-nav .tab-item .ic {
+    font-size:clamp(15px,4vw,18px)!important;
+  }
+}
+@media (max-width:420px) {
+  .patient-inpatient-grid { grid-template-columns:minmax(0,1fr); }
+  .journey-map-scene { min-height:225px; }
+  .journey-map-node:nth-child(even) { margin-top:66px; }
+  .journey-map-building { width:27px; height:39px; padding:5px 3px 4px; }
+  .journey-map-building i { width:4px; }
+  .journey-map-node > strong { font-size:8px; }
+  .journey-map-person { transform:translate(-50%,-50%) scale(.88); }
+  .topbar { flex-wrap:wrap; }
+}
+@media (prefers-reduced-motion:reduce) {
+  .journey-map-person, .journey-map-node, .bottom-tabbar .tab-item,
+  .patient-bottom-nav .tab-item { transition:none!important; animation:none!important; }
+}
