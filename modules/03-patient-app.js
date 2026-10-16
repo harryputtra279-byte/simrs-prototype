@@ -491,8 +491,8 @@ function patientInpatientJourney(a){
   const bed=Store.data.beds.find(function(b){return b.id===a.bedId;})||{};
   const ward=Store.data.wards.find(function(w){return w.id===a.wardId;})||{};
   const orders=Array.isArray(a.orders)?a.orders:[];
-  const hasLab=orders.some(function(o){return o.jenis==='lab';});
-  const hasRad=orders.some(function(o){return o.jenis==='radiologi';});
+  const hasLab=orders.some(function(o){return o.jenis==='lab'&&!['dibatalkan','ditolak'].includes(o.status);});
+  const hasRad=orders.some(function(o){return o.jenis==='radiologi'&&!['dibatalkan','ditolak'].includes(o.status);});
   const hasRx=Array.isArray(Store.data.prescriptions) && Store.data.prescriptions.some(function(r){return r.admissionId===a.id;});
   const labDone=hasLab && orders.some(function(o){return o.jenis==='lab'&&o.status==='selesai';});
   const radDone=hasRad && orders.some(function(o){return o.jenis==='radiologi'&&o.status==='selesai';});
@@ -514,8 +514,10 @@ function patientInpatientJourney(a){
   if(hasRx) supporting.push({label:'Farmasi',icon:'💊',state:rxDone?'done':'active',sub:rxDone?'Obat selesai diproses':'Instruksi obat aktif'});
   if(a.vitalLog&&a.vitalLog.length) supporting.push({label:'Monitoring',icon:'📈',state:'done',sub:'Tanda vital tercatat'});
   const step=function(x){return '<div class="inpatient-journey-step '+x.state+'"><span class="journey-icon">'+(x.state==='done'?'✓':x.icon)+'</span><div><strong>'+esc(x.label)+'</strong><small>'+esc(x.sub||'')+'</small></div></div>';};
+  // Peta gabungan mengikuti rute utama; Lab/Radiologi/Farmasi hanya masuk bila ada order/aktivitas.
+  const mapJourney=main.slice(0,4).concat(supporting).concat(main.slice(4)).map(function(x){return {key:x.key||x.label.toLowerCase().replace(/[^a-z0-9]+/g,'-'),label:x.label,icon:x.icon,state:x.state,sub:x.sub};});
   return '<section class="patient-journey-card"><div class="patient-journey-title"><div><div class="ops-eyebrow">ONE PATIENT · ONE EPISODE · ONE JOURNEY</div><h3>🧭 Perjalanan Rawat Inap</h3></div><span class="journey-legend"><i class="done">✓</i> selesai <i class="active">●</i> aktif <i class="pending">○</i> belum</span></div>'+
-    renderPatientJourneyMapFromSteps(main,'Rawat inap · '+(main.find(function(x){return x.state==='active';})||main[main.length-1]).label)+'<div class="inpatient-main-journey">'+main.map(step).join('')+'</div>'+
+    renderPatientJourneyMapFromSteps(mapJourney,'Rawat inap · '+(main.find(function(x){return x.state==='active';})||main[main.length-1]).label)+'<div class="inpatient-main-journey">'+main.map(step).join('')+'</div>'+
     (supporting.length?'<div class="journey-support"><div class="hint journey-support-title">AKTIVITAS PENDUKUNG</div><div class="journey-support-grid">'+supporting.map(step).join('')+'</div></div>':'')+
     '<div class="journey-note">Ikon <strong>menyala</strong> menunjukkan tahap yang sedang aktif. Tahap Lab/Radiologi/Farmasi hanya muncul jika memang ada order atau aktivitas pada episode ini.</div></section>';
 }
@@ -584,8 +586,8 @@ function renderPatientDashboard(){
     const st=(STATUS_MAP[igdV.status]||{label:igdV.status}).label;
     const triageLabel=igdV.triage&&igdV.triage.level?({'merah':'Zona Merah','kuning':'Zona Kuning','hijau':'Zona Hijau','biru':'Zona Hijau'}[igdV.triage.level]||'Prioritas belum ditetapkan'):'Menunggu penilaian triase';
     const igdSteps=[{label:'Kedatangan / Rujukan',state:'done',sub:'Episode IGD tercatat'},{label:'Triase',state:igdV.triage&&igdV.triage.level?'done':'active',sub:triageLabel},{label:'Pemeriksaan dan penanganan',state:['menunggu_dokter','dipanggil','diperiksa','observasi','menunggu_lab','menunggu_penunjang','menunggu_review','menunggu_farmasi','obat_siap','menunggu_bayar'].includes(igdV.status)?'active':(igdV.diagnosis?'done':'pending'),sub:st}];
-    if(igdV.labRequest)igdSteps.push({label:'Laboratorium',state:igdV.labRequest.status==='selesai'?'done':igdV.labRequest.status==='menunggu'?'active':'active',sub:igdV.labRequest.status==='selesai'?'Hasil tersedia':igdV.labRequest.status==='diterima'?'Permintaan diterima unit':'Pemeriksaan diproses'});
-    if(igdV.radiologyRequest)igdSteps.push({label:'Radiologi',state:igdV.radiologyRequest.status==='selesai'?'done':'active',sub:igdV.radiologyRequest.status==='selesai'?'Hasil tersedia':igdV.radiologyRequest.status==='diterima'?'Permintaan diterima unit':'Pemeriksaan diproses'});
+    if(igdV.labRequest&&!['dibatalkan','ditolak'].includes(igdV.labRequest.status))igdSteps.push({label:'Laboratorium',state:igdV.labRequest.status==='selesai'?'done':igdV.labRequest.status==='menunggu'?'active':'active',sub:igdV.labRequest.status==='selesai'?'Hasil tersedia':igdV.labRequest.status==='diterima'?'Permintaan diterima unit':'Pemeriksaan diproses'});
+    if(igdV.radiologyRequest&&!['dibatalkan','ditolak'].includes(igdV.radiologyRequest.status))igdSteps.push({label:'Radiologi',state:igdV.radiologyRequest.status==='selesai'?'done':'active',sub:igdV.radiologyRequest.status==='selesai'?'Hasil tersedia':igdV.radiologyRequest.status==='diterima'?'Permintaan diterima unit':'Pemeriksaan diproses'});
     const igdRx=getResepByVisit(igdV.id);if(igdRx&&Array.isArray(igdRx.items)&&igdRx.items.length)igdSteps.push({label:'Farmasi IGD',state:['diberikan','diambil','selesai'].includes(igdRx.status)?'done':'active',sub:({'menunggu':'Menunggu farmasi','disiapkan':'Obat disiapkan','diambil':'Obat diambil','diberikan':'Obat diberikan','selesai':'Selesai'})[igdRx.status]||igdRx.status});
     if(igdV.disposition==='observasi'||igdV.status==='observasi')igdSteps.push({label:'Observasi dan evaluasi ulang',state:'active',sub:'Episode IGD tetap aktif'});
     if(igdV.disposition==='rawat_inap'||igdV.status==='rujuk_ranap')igdSteps.push({label:'Perpindahan ke rawat inap',state:'active',sub:'Menunggu admisi, perpindahan, dan serah terima dikonfirmasi'});
@@ -618,8 +620,8 @@ function kpiPatient(icon,label,value,sub){ return '<div class="ops-kpi"><div cla
 function patientJourneyDefinition(v){
   // Patient Journey bersifat dinamis: unit yang tidak dibutuhkan pasien tidak ditampilkan.
   // Jalur aktual ditentukan oleh tindakan/permintaan dokter, bukan sekadar poli.
-  const hasLab=!!(v && v.labRequest);
-  const hasRad=!!(v && v.radiologyRequest);
+  const hasLab=!!(v && v.labRequest && !['dibatalkan','ditolak'].includes(v.labRequest.status));
+  const hasRad=!!(v && v.radiologyRequest && !['dibatalkan','ditolak'].includes(v.radiologyRequest.status));
   const rx=v?getResepByVisit(v.id):null;
   const hasRx=!!(v && rx && Array.isArray(rx.items) && rx.items.length>0 && ['menunggu','disiapkan','diambil','diberikan','selesai'].includes(rx.status));
   const steps=[
@@ -695,34 +697,55 @@ function patientJourneyStepState(v, step){
    Menyusun tahapan yang ditampilkan kepada pasien. Urutan tampilan harus
    selaras dengan status sumber; jangan menandai tahap selesai hanya karena
    sebuah tombol/tampilan dibuka. */
+/* PENCARIAN KODE: PETA PERJALANAN — GEOMETRI ZIG-ZAG DINAMIS
+   Setiap tujuan yang relevan ditempatkan selang-seling atas/bawah. SVG rute
+   dibangun dari jumlah tujuan aktual; layanan tanpa order tidak dibuat sebagai node.
+   Figur bergerak hanya mengikuti indeks tahap yang diturunkan dari status episode. */
+function buildPatientJourneyGeometry(steps, activeIndex){
+  const count=Math.max(1,steps.length), pts=[];
+  for(let i=0;i<count;i++){
+    const x=((i+0.5)/count)*100;
+    const y=(i%2===0)?22:70;
+    pts.push({x:x,y:y});
+  }
+  const points=pts.map(function(p){return p.x.toFixed(2)+','+p.y.toFixed(2);}).join(' ');
+  const safeIndex=Math.max(0,Math.min(count-1,activeIndex));
+  const activePct=count>1?(safeIndex/(count-1))*100:100;
+  const path='<svg class="journey-route-svg" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">'+
+    '<polyline class="journey-route-base" points="'+points+'" pathLength="100" />'+
+    '<polyline class="journey-route-active" points="'+points+'" pathLength="100" style="stroke-dasharray:'+activePct+' 100" />'+
+    '</svg>';
+  return {points:pts,svg:path,activeIndex:safeIndex,progress:activePct};
+}
 function renderPatientJourneyMapFromSteps(steps, currentLabel){
   if(!Array.isArray(steps)||!steps.length)return '';
   const states=steps.map(function(step){return step.state==='done'?'done':step.state==='active'?'active':'pending';});
   const found=states.findIndex(function(state){return state==='active';});
   const pendingIndex=states.findIndex(function(state){return state==='pending';});
   const activeIndex=found>=0?found:(pendingIndex>=0?pendingIndex:Math.max(0,states.length-1));
+  const geometry=buildPatientJourneyGeometry(steps,activeIndex);
   const current=steps[activeIndex]||steps[steps.length-1];
-  const progress=steps.length>1?activeIndex/(steps.length-1)*100:0;
-  const nodes=steps.map(function(step,i){const state=states[i];return '<div class="journey-map-node '+state+'" data-journey-key="'+esc(step.key||step.label)+'"><span class="journey-map-building" aria-hidden="true"><i></i><i></i><i></i><b>'+(state==='done'?'✓':esc(step.icon||'•'))+'</b></span><strong>'+esc(step.label)+'</strong></div>';}).join('');
+  const nodes=steps.map(function(step,i){
+    const state=states[i],point=geometry.points[i];
+    return '<div class="journey-map-node '+state+' '+(i%2===0?'journey-node-top':'journey-node-bottom')+'" data-journey-key="'+esc(step.key||step.label)+'" style="--journey-node-x:'+point.x+'%;--journey-node-y:'+point.y+'%"><span class="journey-map-building" aria-hidden="true"><i></i><i></i><i></i><b>'+(state==='done'?'✓':esc(step.icon||'•'))+'</b></span><strong>'+esc(step.label)+'</strong></div>';
+  }).join('');
   const finished=states.every(function(state){return state==='done';});
-  return '<section class="patient-journey-map" aria-label="Peta perjalanan layanan pasien"><div class="journey-map-head"><div><span class="simrs-eyebrow">PETA PERJALANAN</span><h3>Lokasi layanan Anda</h3></div><span class="journey-map-current">'+esc(currentLabel||current.sub||current.label)+'</span></div><div class="journey-map-scene" style="--journey-count:'+steps.length+'"><div class="journey-map-ground" aria-hidden="true"></div><div class="journey-map-route" style="--journey-progress:'+progress+'%" aria-hidden="true"></div><div class="journey-map-nodes">'+nodes+'</div><div class="journey-map-person '+(finished?'is-finished':'')+'" style="--journey-person-x:'+progress+'%;--journey-person-y:'+(activeIndex%2===0?'30%':'69%')+'" aria-label="Posisi pasien pada tahap '+esc(current.label)+'"><span aria-hidden="true">●</span><b aria-hidden="true">●</b><i aria-hidden="true">▰</i></div></div><p class="journey-map-note">Figur menunjukkan tahap pelayanan yang tercatat, bukan posisi GPS. Perpindahan mengikuti konfirmasi petugas.</p></section>';
+  const point=geometry.points[geometry.activeIndex];
+  return '<section class="patient-journey-map" aria-label="Peta perjalanan layanan pasien"><div class="journey-map-head"><div><span class="simrs-eyebrow">PETA PERJALANAN</span><h3>Lokasi layanan Anda</h3></div><span class="journey-map-current">'+esc(currentLabel||current.sub||current.label)+'</span></div><div class="journey-map-scene" style="--journey-count:'+steps.length+'">'+
+    '<div class="journey-map-ground" aria-hidden="true"></div>'+geometry.svg+'<div class="journey-map-nodes">'+nodes+'</div>'+ 
+    '<div class="journey-map-person '+(finished?'is-finished':'')+'" style="--journey-person-x:'+point.x+'%;--journey-person-y:'+point.y+'%;--journey-person-offset-x:'+(geometry.activeIndex===steps.length-1?'-15px':'15px')+'" role="img" aria-label="Figur pasien di '+esc(current.label)+'"><span aria-hidden="true"></span><b aria-hidden="true"></b><i aria-hidden="true"></i></div></div><p class="journey-map-note">Figur menunjukkan tahap pelayanan yang tercatat, bukan posisi GPS. Perpindahan mengikuti konfirmasi petugas.</p></section>';
 }
 
 function patientFlow(v){
   const steps=patientJourneyDefinition(v);
   const states=steps.map(function(step){return patientJourneyStepState(v,step);});
+  const mapSteps=steps.map(function(step,i){return Object.assign({},step,{state:states[i]});});
   const foundActive=states.findIndex(function(state){return state==='active';});
   const pendingIndex=states.findIndex(function(state){return state==='pending';});
   const activeIndex=foundActive>=0?foundActive:(pendingIndex>=0?pendingIndex:Math.max(0,states.length-1));
   const activeStep=steps[activeIndex]||steps[steps.length-1]||null;
-  const routePct=steps.length>1?(activeIndex/(steps.length-1))*100:0;
-  const journeyFinished=states.length>0&&states.every(function(state){return state==='done';});
-  const mapNodes=steps.map(function(step,i){
-    const state=states[i],cls=state==='done'?'done':state==='active'?'active':'pending';
-    return '<div class="journey-map-node '+cls+'" data-journey-key="'+esc(step.key)+'"><span class="journey-map-building" aria-hidden="true"><i></i><i></i><i></i><b>'+(state==='done'?'✓':step.icon)+'</b></span><strong>'+esc(step.label)+'</strong></div>';
-  }).join('');
   const sub=activeStep&&activeStep.sub?activeStep.sub:(activeStep?activeStep.label:'Menunggu pembaruan');
-  const map='<section class="patient-journey-map" aria-label="Peta perjalanan layanan pasien"><div class="journey-map-head"><div><span class="simrs-eyebrow">PETA PERJALANAN</span><h3>Lokasi layanan Anda</h3></div><span class="journey-map-current">'+esc(sub)+'</span></div><div class="journey-map-scene"><div class="journey-map-ground" aria-hidden="true"></div><div class="journey-map-route" style="--journey-progress:'+routePct+'%" aria-hidden="true"></div><div class="journey-map-nodes">'+mapNodes+'</div><div class="journey-map-person '+(journeyFinished||activeStep&&activeStep.key==='done'?'is-finished':'')+'" style="--journey-person-x:'+routePct+'%;--journey-person-y:'+(activeIndex%2===0?'30%':'69%')+'" aria-label="Posisi pasien pada tahap '+esc(activeStep?activeStep.label:'layanan')+'"><span aria-hidden="true">●</span><b aria-hidden="true">●</b><i aria-hidden="true">▰</i></div></div><p class="journey-map-note">Peta mengikuti status layanan yang tercatat, bukan pelacakan GPS. Lokasi berikutnya hanya ditampilkan bila terkait dengan episode ini.</p></section>';
+  const map=renderPatientJourneyMapFromSteps(mapSteps,sub);
   const timeline=steps.map(function(step,i){
     const state=states[i],isDone=state==='done',isActive=state==='active';
     const sub=step.sub?'<small>'+esc(step.sub)+'</small>':'<small>'+esc(step.key.toUpperCase())+'</small>';
@@ -730,6 +753,7 @@ function patientFlow(v){
   }).join('');
   return map+'<div class="patient-flow-timeline" aria-label="Timeline status layanan">'+timeline+'</div>';
 }
+
 /* PENCARIAN KODE: MODUL APLIKASI PASIEN — IZIN NOTIFIKASI
    Mengelola kesiapan notifikasi di browser. Penolakan izin tidak boleh
    menghentikan booking, check-in, atau alur pelayanan inti. */
