@@ -1,4 +1,4 @@
-# CHANGELOG SIMRS PROTOTYPE V16.5.26
+# CHANGELOG SIMRS PROTOTYPE V16.5.27
 
 Baseline: V16.5.25 (paket dengan bug layout dan peta yang dilaporkan pengguna).
 
@@ -11,7 +11,7 @@ Baseline: V16.5.25 (paket dengan bug layout dan peta yang dilaporkan pengguna).
 - Peta Rawat Inap menggabungkan layanan penunjang hanya jika order/aktivitas benar-benar ada. Laboratorium dan Radiologi tidak ditambahkan bila tidak diminta; aturan kondisional IGD dan Rawat Jalan tetap dipertahankan.
 - Menghapus batas `maximum-scale=1` agar zoom aksesibilitas browser tetap diizinkan.
 - Menambahkan kontrak audit Stage 12 dan komentar/penanda pencarian kode pada perubahan utama.
-- Versi runtime, aset, dan cache Service Worker dinaikkan ke V16.5.26.
+- Versi runtime, aset, dan cache Service Worker dinaikkan ke V16.5.27.
 
 ## Tidak diubah
 - README.md tidak diubah.

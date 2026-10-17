@@ -1433,7 +1433,7 @@ html[data-theme-kind="nature"][data-theme-id="sakura-garden"]::before,html[data-
 
 
 /* =========================================================
-   PENCARIAN KODE: V16.5.26 RESPONSIVE + RUTE ZIG-ZAG
+   PENCARIAN KODE: V16.5.27 RESPONSIVE + RUTE ZIG-ZAG
    Audit lintas peran: semua halaman, navbar, kartu, modal,
    formulir dan peta perjalanan harus mengikuti lebar viewport.
    ========================================================= */
@@ -1579,7 +1579,7 @@ table { max-width:100%; }
 
 
 /* =========================================================
-   PENCARIAN KODE: V16.5.26 AUDIT LAYOUT SEMUA ROLE + FIGUR 3D
+   PENCARIAN KODE: V16.5.27 AUDIT LAYOUT SEMUA ROLE + FIGUR 3D
    Prioritas terakhir untuk mengatasi aturan legacy yang bertumpuk.
    Tidak mengubah alur data; hanya layout dan rendering peta.
    ========================================================= */
@@ -1709,3 +1709,30 @@ body { width:100%; min-width:0; max-width:100%; overflow-x:clip; }
   .journey-map-node.journey-node-bottom { padding-top:0!important; }
 }
 @media(prefers-reduced-motion:reduce) { .journey-map-person { transition:none!important; } }
+
+/* =========================================================
+   MODUL RESPONSIVE HOTFIX V16.5.27
+   PENCARIAN KODE: RESPONSIVE_IGD_ACTION_WRAP_V16527
+   Tujuan: label aksi bed tidak meluber; tetap terbaca maksimal 2 baris.
+   ========================================================= */
+.igd-bed-card [data-release-igd-bed],
+.igd-bed-card [data-clean-igd-bed],
+.igd-bed-card [data-assign-igd-bed] {
+  box-sizing:border-box;
+  width:100%;
+  max-width:100%;
+  min-width:0;
+  white-space:normal!important;
+  overflow-wrap:anywhere;
+  word-break:normal;
+  line-height:1.25;
+  text-align:center;
+  padding-inline:8px;
+}
+.igd-bed-card [data-release-igd-bed] { min-height:38px; }
+.igd-bed-card, .igd-bed-card > *, .patient-inpatient-grid > * { min-width:0; max-width:100%; box-sizing:border-box; }
+.patient-inpatient-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+.patient-inpatient-grid strong { overflow-wrap:anywhere; }
+@media(max-width:340px) {
+  .patient-inpatient-grid { grid-template-columns:minmax(0,1fr); }
+}
