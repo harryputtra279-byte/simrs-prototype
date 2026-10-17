@@ -10,5 +10,5 @@ check('tidak kembali ke indeks nol saat tidak ada status active',p.includes("con
 check('posisi selesai tidak mengklaim tahap awal',p.includes('const finished=states.every(function(state){return state===\'done\';});'));
 check('map menjelaskan bukan GPS dan perpindahan terkonfirmasi',p.includes('bukan posisi GPS')&&p.includes('Perpindahan mengikuti konfirmasi petugas'));
 check('rute/figur menghormati reduced motion',css.includes('@media(prefers-reduced-motion:reduce)')&&css.includes('.journey-map-person'));
-check('cache dan runtime versi 16.5.26 konsisten',html.includes('v16.5.26')&&sw.includes("SW_VERSION = 'v16.5.26'")&&sw.includes('modules/03-patient-app.js?v=16.5.26'));
+check('cache dan runtime versi 16.5.27 konsisten',html.includes('v16.5.27')&&sw.includes("SW_VERSION = 'v16.5.27'")&&sw.includes('modules/03-patient-app.js?v=16.5.27'));
 console.log(pass+'/8 checks passed');

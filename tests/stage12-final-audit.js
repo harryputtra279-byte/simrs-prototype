@@ -1,4 +1,4 @@
-/* PENCARIAN KODE: STAGE 12 — AUDIT RELEASE V16.5.26 */
+/* PENCARIAN KODE: STAGE 12 — AUDIT RELEASE V16.5.27 */
 'use strict';
 const fs=require('fs'),path=require('path'),root=path.resolve(__dirname,'..');
 const p=fs.readFileSync(path.join(root,'modules/03-patient-app.js'),'utf8');
@@ -7,7 +7,7 @@ const html=fs.readFileSync(path.join(root,'index.html'),'utf8');
 const sw=fs.readFileSync(path.join(root,'sw.js'),'utf8');
 const core=fs.readFileSync(path.join(root,'modules/01-core-store-master.js'),'utf8');
 const checks=[
- ['versi HTML, runtime, dan cache seragam V16.5.26',html.includes('v16.5.26')&&sw.includes("SW_VERSION = 'v16.5.26'")&&core.includes("PROTOTYPE_VERSION = 'v16.5.26'")],
+ ['versi HTML, runtime, dan cache seragam V16.5.27',html.includes('v16.5.27')&&sw.includes("SW_VERSION = 'v16.5.27'")&&core.includes("PROTOTYPE_VERSION = 'v16.5.27'")],
  ['pola tujuan ditetapkan bergantian atas-bawah',p.includes('const y=(i%2===0)?22:70;')],
  ['rute SVG dihitung dari jumlah titik aktual',p.includes('buildPatientJourneyGeometry')&&p.includes('journey-route-svg')&&p.includes('const points=pts.map')],
  ['karakter manusia mempunyai kepala, badan, anggota gerak 3D',css.includes('.journey-map-person span::before')&&css.includes('.journey-map-person::before')&&css.includes('.journey-map-person i')&&css.includes('radial-gradient(circle at 30% 22%')],
@@ -20,7 +20,7 @@ const checks=[
  ['zoom browser tidak dibatasi dengan maximum-scale',!html.includes('maximum-scale=1')],
  ['layout mobile membatasi konten dan navbar pada viewport',css.includes('max-width:100vw!important')&&css.includes('left:8px!important; right:8px!important')],
  ['nama tombol Admin disembunyikan pada ruang sempit, tidak meluber',css.includes('.admin-topbar .admin-menu-label { display:none!important;')],
- ['penanda komentar modul perbaikan tersedia',p.includes('PENCARIAN KODE: PETA PERJALANAN — GEOMETRI ZIG-ZAG DINAMIS')&&css.includes('PENCARIAN KODE: V16.5.26 AUDIT LAYOUT SEMUA ROLE + FIGUR 3D')]
+ ['penanda komentar modul perbaikan tersedia',p.includes('PENCARIAN KODE: PETA PERJALANAN — GEOMETRI ZIG-ZAG DINAMIS')&&css.includes('PENCARIAN KODE: V16.5.27 AUDIT LAYOUT SEMUA ROLE + FIGUR 3D')]
 ];
 let failed=0; for(const [label,ok] of checks){console.log((ok?'PASS ':'FAIL ')+label);if(!ok)failed++;}
 console.log(`${checks.length-failed}/${checks.length} checks passed`);process.exitCode=failed?1:0;

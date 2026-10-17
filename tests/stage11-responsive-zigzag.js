@@ -14,7 +14,7 @@ const checks=[
  ['peta punya node bergantian atas-bawah',patient.includes('const y=(i%2===0)?22:70;')&&css.includes('.journey-route-svg')],
  ['figur memakai koordinat vertikal tahap aktif',/--journey-person-y:/.test(patient)&&patient.includes('buildPatientJourneyGeometry')],
  ['peta memberi keterangan bukan GPS',/bukan pelacakan GPS|bukan posisi GPS/.test(patient)],
- ['runtime dinaikkan konsisten ke v16.5.26',/16\.5\.26/.test(html)&&/16\.5\.26/.test(sw)]
+ ['runtime dinaikkan konsisten ke v16.5.27',/16\.5\.27/.test(html)&&/16\.5\.27/.test(sw)]
 ];
 let failed=0;
 for(const [label,ok] of checks){console.log((ok?'PASS ':'FAIL ')+label);if(!ok)failed++;}
